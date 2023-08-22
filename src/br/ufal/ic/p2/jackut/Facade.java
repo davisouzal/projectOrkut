@@ -8,33 +8,32 @@ public class Facade {
     private Usuario usuarioLogado = null;
 
     public void criarUsuario(String login, String senha, String nome) {
-        if (!usuarios.containsKey(login)) {
-            Usuario novoUsuario = new Usuario(login, senha, nome);
-            usuarios.put(login, novoUsuario);
 
-            //caso o usuario insira um login vazio retorna essa exce√ß√£o
-            if(novoUsuario.getLogin()==null){
-                throw new RuntimeException("Login invalido.");
-            }//caso o ususario insira uma senha vazia retorna essa exce√ß√£o
-            if(novoUsuario.getSenha()==null){
-                throw new RuntimeException("Senha inv√°lida.");
-            }
-        } else {
-            throw new RuntimeException("Conta com esse nome j√° existe.");
+        Usuario novoUsuario = new Usuario(login, senha, nome);
+        //caso o usuario insira um login vazio retorna essa exceÁ„o
+        if(novoUsuario.getLogin()==null){
+            throw new RuntimeException("Login inv·lido.");
+        }//caso o ususario insira uma senha vazia retorna essa exceÁ„o
+        if(novoUsuario.getSenha()==null){
+            throw new RuntimeException("Senha inv·lida.");
         }
+        if(usuarios.containsKey(login)){
+            throw new RuntimeException("Conta com esse nome j· existe.");
+        }
+        usuarios.put(login, novoUsuario);
     }
 
     public void abrirSessao(String login, String senha) {
-        //verifica se entre os ususarios cont√©m o login inserido, caso contrario, lan√ßa a exce√ß√£o.
+        //verifica se entre os ususarios contÈm o login inserido, caso contrario, lanÁa a exceÁ„o.
         if (usuarios.containsKey(login)) {
             Usuario usuario = usuarios.get(login);
             if (usuario.validarSenha(senha)) {
                 usuarioLogado = usuario;
-            } else {//caso a senha nao sexa validada, lan√ßa a exce√ß√£o
-                throw new RuntimeException("Login ou senha inv√°lidos.");
+            } else {//caso a senha nao sexa validada, lanÁa a exceÁ„o
+                throw new RuntimeException("Login ou senha inv·lidos.");
             }
         } else {
-            throw new RuntimeException("Login ou senha inv√°lidos.");
+            throw new RuntimeException("Login ou senha inv·lidos.");
         }
     }
 
@@ -44,15 +43,20 @@ public class Facade {
                 case "nome":
                     return usuarios.get(login).getNome();
                 default:
-                    throw new RuntimeException("Atributo inv√°lido.");
+                    throw new RuntimeException("Atributo inv·lido.");
             }
         } else {
-            throw new RuntimeException("Usu√°rio n√£o cadastrado.");
+            throw new RuntimeException("Usu·rio n„o cadastrado.");
 
         }
     }
 
     public void zerarSistema() {
+        usuarios.clear();
+        usuarioLogado = null;
+    }
+
+    public void encerrarSistema(){
         usuarios.clear();
         usuarioLogado = null;
     }
