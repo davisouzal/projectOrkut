@@ -9,43 +9,49 @@ public class Facade {
 
     public void criarUsuario(String login, String senha, String nome) {
         if (login == null || login.isEmpty()) {
-            throw new RuntimeException("Login inv√°lido.");
+            throw new RuntimeException("Login inv·lido.");
         }
 
         if( senha == null || senha.isEmpty()) {
-            throw new RuntimeException("Senha inv√°lida.");
+            throw new RuntimeException("Senha inv·lida.");
         }
 
         if (!usuarios.containsKey(login)) {
             Usuario novoUsuario = new Usuario(login, senha, nome);
+            novoUsuario.setId("${id"+(usuarios.size()+1)+"}"); //id fica nessa notaÁao
             usuarios.put(login, novoUsuario);
         } else {
-            throw new RuntimeException("Conta com esse nome j√° existe.");
+            throw new RuntimeException("Conta com esse nome j· existe.");
         }
     }
 
     public void abrirSessao(String login, String senha) {
         if (login == null || senha == null) {
-            throw new RuntimeException("Login ou senha inv√°lidos.");
+            throw new RuntimeException("Login ou senha inv·lidos.");
         }
 
         Usuario usuario = usuarios.get(login);
         if (usuario == null || !usuario.validarSenha(senha)) {
-            throw new RuntimeException("Login ou senha inv√°lidos.");
+            throw new RuntimeException("Login ou senha inv·lidos.");
         }
         usuarioLogado = usuario;
     }
 
     public String getAtributoUsuario(String login, String atributo) {
+        Usuario user = usuarios.get(login);
+
         if (usuarios.containsKey(login)) {
-            switch (atributo) {
-                case "nome":
-                    return usuarios.get(login).getNome();
-                default:
-                    throw new RuntimeException("Atributo inv√°lido.");
+            if(atributo.equals("nome")){
+                return usuarios.get(login).getNome();
+            }
+            if(user.getAtributos().containsKey(atributo)) {
+                return (String) user.getAtributos().get(atributo);
+            }
+            else{
+                throw new RuntimeException("Atributo n„o preenchido.");
             }
         } else {
-            throw new RuntimeException("Usu√°rio n√£o cadastrado.");
+            throw new RuntimeException("Usu·rio n„o cadastrado.");
         }
     }
 
@@ -54,35 +60,32 @@ public class Facade {
         usuarioLogado = null;
     }
 
+    public String userFindById(String id){
+        if(id == null){
+            id = "${id"+1+"}";
+        }
+        for (Map.Entry<String, Usuario> entry : usuarios.entrySet()) {
+            Usuario user = entry.getValue();
+            if(user.getId().equals(id)) { //found it
+                return user.getLogin();
+            }
+        }
+        return null;
+    }
+
     public void encerrarSistema() {
-        zerarSistema();
+        usuarioLogado = null;
     }
 
-    class Usuario {
-        private String login;
-        private String senha;
-        private String nome;
+    public void editarPerfil(String id, String atributo, String valor){
 
-        public Usuario(String login, String senha, String nome) {
-            this.login = login;
-            this.senha = senha;
-            this.nome = nome;
+        //search users by id
+        String login = userFindById(id);
+        if(login == null){
+            throw new RuntimeException("Usu·rio n„o cadastrado.");
         }
 
-        public String getLogin() {
-            return login;
-        }
-
-        public String getSenha() {
-            return senha;
-        }
-
-        public String getNome() {
-            return nome;
-        }
-
-        public boolean validarSenha(String senha) {
-            return this.senha.equals(senha);
-        }
     }
+
+
 }
