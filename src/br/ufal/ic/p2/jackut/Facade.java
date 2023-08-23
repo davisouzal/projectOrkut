@@ -8,25 +8,27 @@ public class Facade {
     private Usuario usuarioLogado = null;
 
     public void criarUsuario(String login, String senha, String nome) {
+        if (login == null || login.isEmpty()) {
+            throw new RuntimeException("Login inv·lido.");
+        }
+
+        if( senha == null || senha.isEmpty()) {
+            throw new RuntimeException("Senha inv·lida.");
+        }
+
         if (!usuarios.containsKey(login)) {
             Usuario novoUsuario = new Usuario(login, senha, nome);
             usuarios.put(login, novoUsuario);
         } else {
-            throw new RuntimeException("Conta com esse nome j√° existe.");
+            throw new RuntimeException("Conta com esse nome j· existe.");
         }
     }
 
     public void abrirSessao(String login, String senha) {
-        if (usuarios.containsKey(login)) {
-            Usuario usuario = usuarios.get(login);
-            if (usuario.validarSenha(senha)) {
-                usuarioLogado = usuario;
-            } else {
-                throw new RuntimeException("Senha inv√°lida.");
-            }
-        } else {
-            throw new RuntimeException("Login inv√°lido.");
+        if (login == null || senha == null || !usuarios.containsKey(login) || !usuarios.get(login).validarSenha(senha)) {
+            throw new RuntimeException("Login ou senha inv·lidos.");
         }
+        usuarioLogado = usuarios.get(login);
     }
 
     public String getAtributoUsuario(String login, String atributo) {
@@ -35,16 +37,20 @@ public class Facade {
                 case "nome":
                     return usuarios.get(login).getNome();
                 default:
-                    throw new RuntimeException("Atributo inv√°lido.");
+                    throw new RuntimeException("Atributo inv·lido.");
             }
         } else {
-            throw new RuntimeException("Usu√°rio n√£o cadastrado.");
+            throw new RuntimeException("Usu·rio n„o cadastrado.");
         }
     }
 
     public void zerarSistema() {
         usuarios.clear();
         usuarioLogado = null;
+    }
+
+    public void encerrarSistema() {
+        zerarSistema(); // Just call the existing method to clear users and logged-in user.
     }
 }
 
@@ -57,6 +63,14 @@ class Usuario {
         this.login = login;
         this.senha = senha;
         this.nome = nome;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public String getSenha() {
+        return senha;
     }
 
     public String getNome() {
