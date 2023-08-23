@@ -25,10 +25,15 @@ public class Facade {
     }
 
     public void abrirSessao(String login, String senha) {
-        if (login == null || senha == null || !usuarios.containsKey(login) || !usuarios.get(login).validarSenha(senha)) {
+        if (login == null || senha == null) {
             throw new RuntimeException("Login ou senha inválidos.");
         }
-        usuarioLogado = usuarios.get(login);
+
+        Usuario usuario = usuarios.get(login);
+        if (usuario == null || !usuario.validarSenha(senha)) {
+            throw new RuntimeException("Login ou senha inválidos.");
+        }
+        usuarioLogado = usuario;
     }
 
     public String getAtributoUsuario(String login, String atributo) {
@@ -50,34 +55,34 @@ public class Facade {
     }
 
     public void encerrarSistema() {
-        zerarSistema(); // Just call the existing method to clear users and logged-in user.
-    }
-}
-
-class Usuario {
-    private String login;
-    private String senha;
-    private String nome;
-
-    public Usuario(String login, String senha, String nome) {
-        this.login = login;
-        this.senha = senha;
-        this.nome = nome;
+        zerarSistema();
     }
 
-    public String getLogin() {
-        return login;
-    }
+    class Usuario {
+        private String login;
+        private String senha;
+        private String nome;
 
-    public String getSenha() {
-        return senha;
-    }
+        public Usuario(String login, String senha, String nome) {
+            this.login = login;
+            this.senha = senha;
+            this.nome = nome;
+        }
 
-    public String getNome() {
-        return nome;
-    }
+        public String getLogin() {
+            return login;
+        }
 
-    public boolean validarSenha(String senha) {
-        return this.senha.equals(senha);
+        public String getSenha() {
+            return senha;
+        }
+
+        public String getNome() {
+            return nome;
+        }
+
+        public boolean validarSenha(String senha) {
+            return this.senha.equals(senha);
+        }
     }
 }
