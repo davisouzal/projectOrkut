@@ -8,33 +8,32 @@ public class Facade {
     private Usuario usuarioLogado = null;
 
     public void criarUsuario(String login, String senha, String nome) {
+        if (login == null || login.isEmpty()) {
+            throw new RuntimeException("Login inv√°lido.");
+        }
 
-        Usuario novoUsuario = new Usuario(login, senha, nome);
-        //caso o usuario insira um login vazio retorna essa exceÁ„o
-        if(novoUsuario.getLogin()==null){
-            throw new RuntimeException("Login inv·lido.");
-        }//caso o ususario insira uma senha vazia retorna essa exceÁ„o
-        if(novoUsuario.getSenha()==null){
-            throw new RuntimeException("Senha inv·lida.");
+        if( senha == null || senha.isEmpty()) {
+            throw new RuntimeException("Senha inv√°lida.");
         }
-        if(usuarios.containsKey(login)){
-            throw new RuntimeException("Conta com esse nome j· existe.");
+
+        if (!usuarios.containsKey(login)) {
+            Usuario novoUsuario = new Usuario(login, senha, nome);
+            usuarios.put(login, novoUsuario);
+        } else {
+            throw new RuntimeException("Conta com esse nome j√° existe.");
         }
-        usuarios.put(login, novoUsuario);
     }
 
     public void abrirSessao(String login, String senha) {
-        //verifica se entre os ususarios contÈm o login inserido, caso contrario, lanÁa a exceÁ„o.
-        if (usuarios.containsKey(login)) {
-            Usuario usuario = usuarios.get(login);
-            if (usuario.validarSenha(senha)) {
-                usuarioLogado = usuario;
-            } else {//caso a senha nao sexa validada, lanÁa a exceÁ„o
-                throw new RuntimeException("Login ou senha inv·lidos.");
-            }
-        } else {
-            throw new RuntimeException("Login ou senha inv·lidos.");
+        if (login == null || senha == null) {
+            throw new RuntimeException("Login ou senha inv√°lidos.");
         }
+
+        Usuario usuario = usuarios.get(login);
+        if (usuario == null || !usuario.validarSenha(senha)) {
+            throw new RuntimeException("Login ou senha inv√°lidos.");
+        }
+        usuarioLogado = usuario;
     }
 
     public String getAtributoUsuario(String login, String atributo) {
@@ -43,11 +42,10 @@ public class Facade {
                 case "nome":
                     return usuarios.get(login).getNome();
                 default:
-                    throw new RuntimeException("Atributo inv·lido.");
+                    throw new RuntimeException("Atributo inv√°lido.");
             }
         } else {
-            throw new RuntimeException("Usu·rio n„o cadastrado.");
-
+            throw new RuntimeException("Usu√°rio n√£o cadastrado.");
         }
     }
 
@@ -56,48 +54,35 @@ public class Facade {
         usuarioLogado = null;
     }
 
-    public void encerrarSistema(){
-        usuarios.clear();
-        usuarioLogado = null;
-    }
-}
-
-class Usuario {
-    private String login;
-    private String senha;
-    private String nome;
-
-    public String getLogin() {
-        return login;
+    public void encerrarSistema() {
+        zerarSistema();
     }
 
-    public void setLogin(String login) {
-        this.login = login;
-    }
+    class Usuario {
+        private String login;
+        private String senha;
+        private String nome;
 
-    public String getSenha() {
-        return senha;
-    }
+        public Usuario(String login, String senha, String nome) {
+            this.login = login;
+            this.senha = senha;
+            this.nome = nome;
+        }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
+        public String getLogin() {
+            return login;
+        }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+        public String getSenha() {
+            return senha;
+        }
 
-    public Usuario(String login, String senha, String nome) {
-        this.login = login;
-        this.senha = senha;
-        this.nome = nome;
-    }
+        public String getNome() {
+            return nome;
+        }
 
-    public String getNome() {
-        return nome;
-    }
-
-    public boolean validarSenha(String senha) {
-        return this.senha.equals(senha);
+        public boolean validarSenha(String senha) {
+            return this.senha.equals(senha);
+        }
     }
 }
