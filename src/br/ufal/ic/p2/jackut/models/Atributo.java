@@ -1,4 +1,4 @@
-package br.ufal.ic.p2.jackut;
+package br.ufal.ic.p2.jackut.models;
 
 public class Atributo {
     private String nome;

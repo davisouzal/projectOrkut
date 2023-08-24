@@ -1,8 +1,9 @@
 package br.ufal.ic.p2.jackut;
 
+import br.ufal.ic.p2.jackut.models.Atributo;
+import br.ufal.ic.p2.jackut.models.Usuario;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class Facade {
     private Map<String, Usuario> usuarios = new HashMap<>();
@@ -19,7 +20,7 @@ public class Facade {
 
         if (!usuarios.containsKey(login)) {
             Usuario novoUsuario = new Usuario(login, senha, nome);
-            novoUsuario.setId("${id"+(usuarios.size()+1)+"}"); //id fica nessa notaçao
+            novoUsuario.setId("${id"+(usuarios.size()+1)+"}"); //id fica nessa notaçao?
             novoUsuario.getAtributos().add(new Atributo("nome", nome));
             usuarios.put(login, novoUsuario);
         } else {
@@ -62,14 +63,10 @@ public class Facade {
         usuarioLogado = null;
     }
 
-    public String userFindById(String id){
-        if(id == null){
-            id = "${id"+1+"}";
-        }
-        for (Map.Entry<String, Usuario> entry : usuarios.entrySet()) {
-            Usuario user = entry.getValue();
-            if(user.getId().equals(id)) { //found it
-                return user.getLogin();
+    public Usuario findUserById(String id){
+        for(Usuario user : usuarios.values()){
+            if(user.getId().equals(id)){
+                return user;
             }
         }
         return null;
@@ -79,21 +76,60 @@ public class Facade {
         usuarioLogado = null;
     }
 
-    public void editarPerfil(String id, String atributo, String valor){
+    public void editarPerfil(String id, String atributo, String valor) {
 
         //search users by id
         if (usuarioLogado == null) {
             throw new RuntimeException("Usuário não cadastrado.");
-        }
-        else{
+        } else {
             usuarios.get(usuarioLogado.getLogin()).addAtributo(atributo, valor);
 
         }
-
-
-
-
+    }
+    public Boolean ehAmigo(String login, String loginAmigo){
+        Usuario user = usuarios.get(login);
+        Usuario userAmigo = usuarios.get(loginAmigo);
+        return user.getAmigo().contains(userAmigo) && userAmigo.getAmigo().contains(user);
     }
 
+    //send friend request, se o amigo ja tiver mandado um, adiciona na lista de amigo de ambos
+    public void adicionarAmigo(String id, String loginAmigo){
+        Usuario user = usuarioLogado;
+        Usuario userAmigo = usuarios.get(loginAmigo);
+        if(userAmigo == null){
+            throw new RuntimeException("Usuário não cadastrado.");
+        }
+        if(ehAmigo(user.getLogin(), userAmigo.getLogin())){
+            throw new RuntimeException("Usuário já é seu amigo.");
+        }
+        if(user.getConviteAmigos().contains(userAmigo) && !userAmigo.getConviteAmigos().contains(user)){
+            throw new RuntimeException("Usuário já está adicionado como amigo, esperando aceitação do convite.");
+        }
+        if(user.getAmigo().contains(userAmigo) && userAmigo.getAmigo().contains(user)){
+            throw new RuntimeException("Usuário já está adicionado como amigo.");
+        }
+        user.getConviteAmigos().add(userAmigo);
+        if(userAmigo.getConviteAmigos().contains(user)){
+            user.getAmigo().add(userAmigo);
+            userAmigo.getAmigo().add(user);
+            user.getConviteAmigos().remove(userAmigo);
+            userAmigo.getConviteAmigos().remove(user);
+        }
 
+    }
+    //amigos adicionados do usuario do login no header
+    public String getAmigos(String login){
+        Usuario user = usuarios.get(login);
+        StringBuilder amigos = new StringBuilder();
+        amigos.append("{");
+        for(Usuario amigo : user.getAmigo()){
+            amigos.append(amigo.getLogin());
+            if(user.getAmigo().indexOf(amigo) != user.getAmigo().size()-1){
+                amigos.append(",");
+            }
+        }
+        amigos.append("}");
+        return amigos.toString();
+
+    }
 }

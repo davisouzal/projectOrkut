@@ -1,4 +1,4 @@
-package br.ufal.ic.p2.jackut;
+package br.ufal.ic.p2.jackut.models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +22,11 @@ public class Usuario {
     private String id;
     private final List<Atributo> atributos = new ArrayList<>();
 
+    //amigos no qual enviou friendRequest
+    private final List<Usuario> conviteAmigos = new ArrayList<>();
+
+    //amigos da lista de amigos que ACEITARAM o friendRequest
+    private final List<Usuario> amigo = new ArrayList<>();
 
     public Usuario(String login, String senha, String nome) {
         this.login = login;
@@ -63,5 +68,13 @@ public class Usuario {
         Atributo atributo = new Atributo(nome, valor);
         atributos.add(atributo);
 
+    }
+
+    public List<Usuario> getAmigo() {
+        return amigo;
+    }
+
+    public List<Usuario> getConviteAmigos() {
+        return conviteAmigos;
     }
 }
