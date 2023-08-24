@@ -32,7 +32,6 @@ public class Facade {
         if (login == null || senha == null) {
             throw new RuntimeException("Login ou senha inválidos.");
         }
-
         Usuario usuario = usuarios.get(login);
         if (usuario == null || !usuario.validarSenha(senha)) {
             throw new RuntimeException("Login ou senha inválidos.");
