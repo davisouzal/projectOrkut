@@ -2,6 +2,7 @@ package br.ufal.ic.p2.jackut;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Facade {
     private Map<String, Usuario> usuarios = new HashMap<>();
@@ -19,6 +20,7 @@ public class Facade {
         if (!usuarios.containsKey(login)) {
             Usuario novoUsuario = new Usuario(login, senha, nome);
             novoUsuario.setId("${id"+(usuarios.size()+1)+"}"); //id fica nessa notaçao
+            novoUsuario.getAtributos().add(new Atributo("nome", nome));
             usuarios.put(login, novoUsuario);
         } else {
             throw new RuntimeException("Conta com esse nome já existe.");
@@ -44,8 +46,8 @@ public class Facade {
             if(atributo.equals("nome")){
                 return usuarios.get(login).getNome();
             }
-            if(user.getAtributos().containsKey(atributo)) {
-                return (String) user.getAtributos().get(atributo);
+            if(user.getAtributo(atributo)!=null){
+                return user.getAtributo(atributo).getValor();
             }
             else{
                 throw new RuntimeException("Atributo não preenchido.");
@@ -80,10 +82,16 @@ public class Facade {
     public void editarPerfil(String id, String atributo, String valor){
 
         //search users by id
-        String login = userFindById(id);
-        if(login == null){
+        if (usuarioLogado == null) {
             throw new RuntimeException("Usuário não cadastrado.");
         }
+        else{
+            usuarios.get(usuarioLogado.getLogin()).addAtributo(atributo, valor);
+
+        }
+
+
+
 
     }
 

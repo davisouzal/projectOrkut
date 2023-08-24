@@ -1,7 +1,10 @@
 package br.ufal.ic.p2.jackut;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
 
 public class Usuario {
     private final String login;
@@ -17,7 +20,7 @@ public class Usuario {
     }
 
     private String id;
-    private final Map<String, String> atributos = new HashMap<>();
+    private final List<Atributo> atributos = new ArrayList<>();
 
 
     public Usuario(String login, String senha, String nome) {
@@ -43,7 +46,22 @@ public class Usuario {
         return this.senha.equals(senha);
     }
 
-    public Map getAtributos() {
+    public List<Atributo> getAtributos() {
         return atributos;
+    }
+
+    public Atributo getAtributo(String nome) {
+        for (Atributo atributo : atributos) {
+            if (atributo.getNome().equals(nome)) {
+                return atributo;
+            }
+        }
+        return null;
+    }
+
+    public void addAtributo(String nome, String valor) {
+        Atributo atributo = new Atributo(nome, valor);
+        atributos.add(atributo);
+
     }
 }
