@@ -11,15 +11,7 @@ public class Usuario {
     private final String senha;
     private final String nome;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    private String id;
+    //exemplo: nome: "nome", valor: "joao"
     private final List<Atributo> atributos = new ArrayList<>();
 
     //amigos no qual enviou friendRequest
