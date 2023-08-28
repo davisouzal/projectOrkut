@@ -208,10 +208,10 @@ public class Facade {
         }
 
         if (sender.getLogin().equals(reciever.getLogin())){
-            throw new RuntimeException("Usuário não pode enviar recado para si mesmo.")
+            throw new RuntimeException("Usuário não pode enviar recado para si mesmo.");
         }
 
-        sender.enviarRecado(sender, reciever);
+        sender.enviarRecado(reciever, mensagem);
     }
     public String lerRecado(String id) throws UserNotFound, NaoHaRecados {
         Usuario usuario = sessoes.get(id);
@@ -223,8 +223,9 @@ public class Facade {
         Recado recado = usuario.getRecado();
 
         if (recado == null) {
-            throw new UserNotFound();
+            throw new NaoHaRecados();
         }
 
         return recado.getRecado();
     }
+}

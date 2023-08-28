@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.LinkedList;
 
 
 public class Usuario {
@@ -27,7 +28,7 @@ public class Usuario {
         this.login = login;
         this.senha = senha;
         this.nome = nome;
-        this.recados = new linkedList<>();
+        this.recados = new LinkedList<>();
 
     }
 
@@ -72,6 +73,11 @@ public class Usuario {
 
     public List<Usuario> getConviteAmigos() {
         return conviteAmigos;
+    }
+
+    public void enviarRecado(Usuario destinatario, String recado) {
+        Recado r = new Recado(this, destinatario, recado);
+        destinatario.recados.add(r);
     }
 
     public Recado getRecado() {
