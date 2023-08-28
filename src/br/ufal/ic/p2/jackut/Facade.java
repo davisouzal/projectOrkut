@@ -7,6 +7,7 @@ import java.io.*;
 import java.util.*;
 
 public class Facade {
+    public static final String USER_NOT_FOUND= "Usuário não cadastrado.";
     private Map<String, Usuario> usuarios;
     private Usuario usuarioLogado;
 
@@ -150,10 +151,13 @@ public class Facade {
     public void adicionarAmigo(String id, String loginAmigo){
         //pega o usuario das sessoes com o seu id de sessao
         Usuario user = sessoes.get(id);
+        if (user == null ){
+            throw new RuntimeException(USER_NOT_FOUND);
+        }
         abrirSessao(user.getLogin(), user.getSenha());
         Usuario userAmigo = usuarios.get(loginAmigo);
         if(userAmigo == null){
-            throw new RuntimeException("Usuário não cadastrado.");
+            throw new RuntimeException(USER_NOT_FOUND);
         }
         if(ehAmigo(user.getLogin(), userAmigo.getLogin())){
             throw new RuntimeException("Usuário já está adicionado como amigo.");
@@ -191,5 +195,9 @@ public class Facade {
         amigos.append("}");
         return amigos.toString();
 
+    }
+
+    public void Quit(){
+        zerarSistema();
     }
 }
