@@ -1,7 +1,10 @@
 package br.ufal.ic.p2.jackut;
 
+import br.ufal.ic.p2.jackut.Exceptions.NaoHaRecados;
+import br.ufal.ic.p2.jackut.Exceptions.UserNotFound;
 import br.ufal.ic.p2.jackut.models.Atributo;
 import br.ufal.ic.p2.jackut.models.Usuario;
+import br.ufal.ic.p2.jackut.models.Recado;
 
 import java.io.*;
 import java.util.*;
@@ -197,7 +200,31 @@ public class Facade {
 
     }
 
-    public void Quit(){
-        zerarSistema();
+    public void enviarRecado(String id, String destinatario, String mensagem) throws UserNotFound{
+        Usuario sender = sessoes.get(id);
+        Usuario reciever = usuarios.get(destinatario);
+        if(sender == null || reciever == null){
+            throw new UserNotFound();
+        }
+
+        if (sender.getLogin().equals(reciever.getLogin())){
+            throw new RuntimeException("Usuário não pode enviar recado para si mesmo.")
+        }
+
+        sender.enviarRecado(sender, reciever);
     }
-}
+    public String lerRecado(String id) throws UserNotFound, NaoHaRecados {
+        Usuario usuario = sessoes.get(id);
+
+        if (usuario == null) {
+            throw new UserNotFound();
+        }
+
+        Recado recado = usuario.getRecado();
+
+        if (recado == null) {
+            throw new UserNotFound();
+        }
+
+        return recado.getRecado();
+    }

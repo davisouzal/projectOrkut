@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 
 public class Usuario {
     private final String login;
     private final String senha;
     private final String nome;
+
+    private final Queue<Recado> recados;
 
     //exemplo: nome: "nome", valor: "joao"
     private final List<Atributo> atributos = new ArrayList<>();
@@ -24,6 +27,7 @@ public class Usuario {
         this.login = login;
         this.senha = senha;
         this.nome = nome;
+        this.recados = new linkedList<>();
 
     }
 
@@ -68,5 +72,13 @@ public class Usuario {
 
     public List<Usuario> getConviteAmigos() {
         return conviteAmigos;
+    }
+
+    public Recado getRecado() {
+        return this.recados.poll();
+    }
+
+    public Queue<Recado> getRecados(){
+        return this.recados;
     }
 }
