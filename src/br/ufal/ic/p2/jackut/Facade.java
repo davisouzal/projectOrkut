@@ -35,6 +35,7 @@ public class Facade {
                 String line;
                 while((line = reader.readLine()) != null){
                     String[] user = line.split(";", -1);
+                    //define o atributo como vazio se nao tiver nome
                     String item = "";
 
                     if(user[2]!= null){
