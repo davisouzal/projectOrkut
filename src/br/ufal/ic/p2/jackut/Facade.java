@@ -34,12 +34,18 @@ public class Facade {
                 BufferedReader reader = new BufferedReader(new FileReader("usuarios.txt"));
                 String line;
                 while((line = reader.readLine()) != null){
-                    String[] user = line.split(";");
-                    Usuario usuario = new Usuario(user[0], user[1], user[2]);
-                    usuario.getAtributos().add(new Atributo("nome", user[2]));
+                    String[] user = line.split(";", -1);
+                    String item = "";
+
+                    if(user[2]!= null){
+                        item = user[2];
+                    }
+                    Usuario usuario = new Usuario(user[0], user[1], item);
                     //adiciona os atributos
-                    for(int i = 3; i < user.length; i+=2){
-                        usuario.getAtributos().add(new Atributo(user[i], user[i+1]));
+                    if(usuario.getAtributos()!=null){
+                        for (int i = 3; i < user.length; i += 2) {
+                            usuario.getAtributos().add(new Atributo(user[i], user[i + 1]));
+                        }
                     }
                     usuarios.put(user[0], usuario);
                 }
@@ -63,7 +69,6 @@ public class Facade {
 
         if (!usuarios.containsKey(login)) {
             Usuario novoUsuario = new Usuario(login, senha, nome);
-            novoUsuario.getAtributos().add(new Atributo("nome", nome));
             usuarios.put(login, novoUsuario);
         } else {
             throw new RuntimeException("Conta com esse nome já existe.");
