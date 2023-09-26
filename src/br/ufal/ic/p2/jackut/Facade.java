@@ -1,7 +1,6 @@
 package br.ufal.ic.p2.jackut;
 
-import br.ufal.ic.p2.jackut.Exceptions.NaoHaRecados;
-import br.ufal.ic.p2.jackut.Exceptions.UserNotFound;
+import br.ufal.ic.p2.jackut.Exceptions.*;
 import br.ufal.ic.p2.jackut.models.Atributo;
 import br.ufal.ic.p2.jackut.models.Usuario;
 import br.ufal.ic.p2.jackut.models.Recado;
@@ -34,7 +33,7 @@ public class Facade {
                 BufferedReader reader = new BufferedReader(new FileReader("usuarios.txt"));
                 String line;
                 while((line = reader.readLine()) != null){
-                    String[] user = line.split(";", -1);
+                    String[] user = line.split(";", -1); //limit:-1 == se nao tiver nada, NAO IGNORA
                     //define o atributo como vazio se nao tiver nome
                     String item = "";
 
@@ -61,28 +60,28 @@ public class Facade {
 
     public void criarUsuario(String login, String senha, String nome) {
         if (login == null || login.isEmpty()) {
-            throw new RuntimeException("Login inválido.");
+            throw new LoginInvalidoException();
         }
 
         if( senha == null || senha.isEmpty()) {
-            throw new RuntimeException("Senha inválida.");
+            throw new SenhaInvalidaException();
         }
 
         if (!usuarios.containsKey(login)) {
             Usuario novoUsuario = new Usuario(login, senha, nome);
             usuarios.put(login, novoUsuario);
         } else {
-            throw new RuntimeException("Conta com esse nome já existe.");
+            throw new ContaJaExisteException();
         }
     }
 
     public String abrirSessao(String login, String senha) {
         if (login == null || senha == null) {
-            throw new RuntimeException("Login ou senha inválidos.");
+            throw new LoginOuSenhaInvalidoException();
         }
         Usuario usuario = usuarios.get(login);
         if (usuario == null || !usuario.validarSenha(senha)) {
-            throw new RuntimeException("Login ou senha inválidos.");
+            throw new LoginOuSenhaInvalidoException();
         }
         this.usuarioLogado = usuario;
 
@@ -104,10 +103,10 @@ public class Facade {
                 return user.getAtributo(atributo).getValor();
             }
             else{
-                throw new RuntimeException("Atributo não preenchido.");
+                throw new AtributoNaoPreenchidoException();
             }
         } else {
-            throw new RuntimeException("Usuário não cadastrado.");
+            throw new UserNotFoundException();
         }
     }
 
@@ -144,7 +143,7 @@ public class Facade {
     public void editarPerfil(String id, String atributo, String valor) {
 
         if (usuarioLogado == null) {
-            throw new RuntimeException("Usuário não cadastrado.");
+            throw new UserNotFoundException();
         } else {
             usuarios.get(usuarioLogado.getLogin()).addAtributo(atributo, valor);
 
@@ -169,16 +168,16 @@ public class Facade {
             throw new RuntimeException(USER_NOT_FOUND);
         }
         if(ehAmigo(user.getLogin(), userAmigo.getLogin())){
-            throw new RuntimeException("Usuário já está adicionado como amigo.");
+            throw new AmigoJaAdicionadoException();
         }
         if(user.getConviteAmigos().contains(userAmigo) && !userAmigo.getConviteAmigos().contains(user)){
-            throw new RuntimeException("Usuário já está adicionado como amigo, esperando aceitação do convite.");
+            throw new EsperandoConviteException();
         }
         if(user.getAmigo().contains(userAmigo) && userAmigo.getAmigo().contains(user)){
-            throw new RuntimeException("Usuário já está adicionado como amigo.");
+            throw new AmigoJaAdicionadoException();
         }
         if(user.getLogin().equals(userAmigo.getLogin())){
-            throw new RuntimeException("Usuário não pode adicionar a si mesmo como amigo.");
+            throw new SelfRequestException();
         }
         user.getConviteAmigos().add(userAmigo);
         //se o amigo ja tiver mandado um, adiciona na lista de amigo de ambos
@@ -206,30 +205,30 @@ public class Facade {
 
     }
 
-    public void enviarRecado(String id, String destinatario, String mensagem) throws UserNotFound{
+    public void enviarRecado(String id, String destinatario, String mensagem) throws UserNotFoundException {
         Usuario sender = sessoes.get(id);
         Usuario reciever = usuarios.get(destinatario);
         if(sender == null || reciever == null){
-            throw new UserNotFound();
+            throw new UserNotFoundException();
         }
 
         if (sender.getLogin().equals(reciever.getLogin())){
-            throw new RuntimeException("Usuário não pode enviar recado para si mesmo.");
+            throw new SelfRecadoException();
         }
 
         sender.enviarRecado(reciever, mensagem);
     }
-    public String lerRecado(String id) throws UserNotFound, NaoHaRecados {
+    public String lerRecado(String id) throws UserNotFoundException, NaoHaRecadosException {
         Usuario usuario = sessoes.get(id);
 
         if (usuario == null) {
-            throw new UserNotFound();
+            throw new UserNotFoundException();
         }
 
         Recado recado = usuario.getRecado();
 
         if (recado == null) {
-            throw new NaoHaRecados();
+            throw new NaoHaRecadosException();
         }
 
         return recado.getRecado();
