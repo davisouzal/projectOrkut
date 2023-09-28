@@ -2,6 +2,7 @@ package br.ufal.ic.p2.jackut;
 
 import br.ufal.ic.p2.jackut.Exceptions.*;
 import br.ufal.ic.p2.jackut.models.Atributo;
+import br.ufal.ic.p2.jackut.models.Comunidade;
 import br.ufal.ic.p2.jackut.models.Usuario;
 import br.ufal.ic.p2.jackut.models.Recado;
 
@@ -15,6 +16,9 @@ public class Facade {
 
     private Map<String, Usuario> sessoes;
 
+    //milestone 2
+    private Map<String, Comunidade> comunidades;
+
     //ao iniciar o programa estabelece o arquivo txt de usuarios ou le o existente
     public Facade(){
         try{
@@ -24,14 +28,18 @@ public class Facade {
                 this.usuarioLogado = null;
                 this.usuarios = new HashMap<>();
                 this.sessoes = new HashMap<>();
+                //milestone 2///////////////////////
+                this.comunidades = new HashMap<>();
             }
             else{
                 this.usuarioLogado = null;
                 this.usuarios = new HashMap<>();
                 this.sessoes = new HashMap<>();
+                //milestone 2////////////////////////
+                this.comunidades = new HashMap<>();
                 //buffered reader é melhor para ler arquivos grandes
                 BufferedReader reader = new BufferedReader(new FileReader("usuarios.txt"));
-                String line;
+                String line;    
                 while((line = reader.readLine()) != null){
                     String[] user = line.split(";", -1); //limit:-1 == se nao tiver nada, NAO IGNORA
                     //define o atributo como vazio se nao tiver nome
@@ -232,5 +240,40 @@ public class Facade {
         }
 
         return recado.getRecado();
+    }
+
+    //////////////////milestone 2////////////////////////////////////////////////////////
+    public void criarComunidade(String id, String nome, String descricao) throws UserNotFoundException {
+        Usuario usuario = sessoes.get(id);
+        if (usuario == null) {
+            throw new UserNotFoundException();
+        }
+        if(comunidades.containsKey(nome)){
+            throw new ComunidadeJaExisteException();
+        }
+        usuario.criarComunidade(nome, descricao);
+        Comunidade novaComunidade = usuario.getComunidades().get(nome);
+        comunidades.put(nome, novaComunidade);
+    }
+
+    public String getDescricaoComunidade(String nome) throws ComunidadeNaoEncontradaException {
+        if(!comunidades.containsKey(nome)){
+            throw new ComunidadeNaoEncontradaException();
+        }
+        return comunidades.get(nome).getDescricao();
+    }
+
+    public String getDonoComunidade(String nomeComunidade) throws ComunidadeNaoEncontradaException{
+        if(!comunidades.containsKey(nomeComunidade)){
+            throw new ComunidadeNaoEncontradaException();
+        }
+        return comunidades.get(nomeComunidade).getDono().getLogin();
+    }
+
+    public List<Usuario> getMembrosComunidade(String nomeComunidade) throws ComunidadeNaoEncontradaException{
+        if(!comunidades.containsKey(nomeComunidade)){
+            throw new ComunidadeNaoEncontradaException();
+        }
+        return comunidades.get(nomeComunidade).getMembros();
     }
 }

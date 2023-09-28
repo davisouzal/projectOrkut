@@ -1,11 +1,6 @@
 package br.ufal.ic.p2.jackut.models;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.LinkedList;
+import java.util.*;
 
 
 public class Usuario {
@@ -23,6 +18,8 @@ public class Usuario {
 
     //amigos da lista de amigos que ACEITARAM o friendRequest
     private final List<Usuario> amigo = new ArrayList<>();
+    //milestone2
+    private final Map<String, Comunidade> comunidades = new HashMap<>();
 
     public Usuario(String login, String senha, String nome) {
         this.login = login;
@@ -87,4 +84,15 @@ public class Usuario {
     public Queue<Recado> getRecados(){
         return this.recados;
     }
+
+    //////////////////milestone 2////////////////////////////////////////////////////////
+    public void criarComunidade(String nome, String descricao) {
+        Comunidade comunidade = new Comunidade(nome, descricao, this);
+        this.comunidades.put(nome, comunidade);
+    }
+
+    public Map<String, Comunidade> getComunidades() {
+        return comunidades;
+    }
+
 }
