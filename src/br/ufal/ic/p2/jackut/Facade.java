@@ -121,6 +121,7 @@ public class Facade {
     public void zerarSistema() {
         usuarios.clear();
         sessoes.clear();
+        comunidades.clear();
         usuarioLogado = null;
         //deleta o arquivo de usuarios
         new File("usuarios.txt").delete();
@@ -288,5 +289,41 @@ public class Facade {
         }
 
         return "{" + String.join(",", membrosString) + "}"; //retorna os membros em uma string
+    }
+
+    //get Comunidades
+    public String getComunidades(String login){
+        Usuario user = usuarios.get(login);
+        if(user == null){
+            throw new UserNotFoundException();
+        }
+
+        List<String> comunidadesString = new ArrayList<>();
+        for(Comunidade comunidade : user.getComunidades().values()){
+            comunidadesString.add(comunidade.getNome());
+        }
+
+        return "{" + String.join(",", comunidadesString) + "}";
+    }
+
+    //adicionar Comunidades, adiciona usuario na lista de membros da comunidade
+    public void adicionarComunidade(String id, String nome){
+        Usuario user = sessoes.get(id);
+        if(user == null){
+            throw new UserNotFoundException();
+        }
+        if (!usuarios.containsKey(user.getLogin())){
+            throw new UserNotFoundException();
+        }
+        if(!comunidades.containsKey(nome)){
+            throw new ComunidadeNaoEncontradaException();
+        }
+        if(user.getComunidades().containsKey(nome)){
+            throw new UsuarioJaEstaNaComunidadeException();
+        }
+        //adiciona usuario na comunidade e comunidade no perfil do usuario
+        comunidades.get(nome).getMembros().add(user);
+        Comunidade comunidade = comunidades.get(nome);
+        user.getComunidades().put(nome, comunidade);
     }
 }

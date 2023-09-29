@@ -19,7 +19,7 @@ public class Usuario {
     //amigos da lista de amigos que ACEITARAM o friendRequest
     private final List<Usuario> amigo = new ArrayList<>();
     //milestone2
-    private final Map<String, Comunidade> comunidades = new HashMap<>();
+    private final Map<String, Comunidade> comunidades = new LinkedHashMap<>(); //deixei como linked pq por algum motivo o teste qria q fosse em ordem
 
     public Usuario(String login, String senha, String nome) {
         this.login = login;
