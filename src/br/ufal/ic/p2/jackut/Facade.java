@@ -252,7 +252,9 @@ public class Facade {
             throw new ComunidadeJaExisteException();
         }
         usuario.criarComunidade(nome, descricao);
+
         Comunidade novaComunidade = usuario.getComunidades().get(nome);
+        novaComunidade.getMembros().add(usuario);
         comunidades.put(nome, novaComunidade);
     }
 
@@ -270,10 +272,20 @@ public class Facade {
         return comunidades.get(nomeComunidade).getDono().getLogin();
     }
 
-    public List<Usuario> getMembrosComunidade(String nomeComunidade) throws ComunidadeNaoEncontradaException{
+    public String getMembrosComunidade(String nomeComunidade) throws ComunidadeNaoEncontradaException{
         if(!comunidades.containsKey(nomeComunidade)){
             throw new ComunidadeNaoEncontradaException();
         }
-        return comunidades.get(nomeComunidade).getMembros();
+        Comunidade comunidade = comunidades.get(nomeComunidade);
+        StringBuilder membros = new StringBuilder();
+        membros.append("{");
+        for(Usuario user : comunidade.getMembros()){
+            membros.append(user.getLogin());
+            if(comunidade.getMembros().indexOf(user) != comunidade.getMembros().size()-1){
+                membros.append(",");
+            }
+        }
+        membros.append("}");
+        return membros.toString();
     }
 }
