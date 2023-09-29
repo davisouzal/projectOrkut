@@ -273,19 +273,20 @@ public class Facade {
     }
 
     public String getMembrosComunidade(String nomeComunidade) throws ComunidadeNaoEncontradaException{
+        //checa se comunidade existe
         if(!comunidades.containsKey(nomeComunidade)){
             throw new ComunidadeNaoEncontradaException();
         }
+        //pega comunidade e os membros
         Comunidade comunidade = comunidades.get(nomeComunidade);
-        StringBuilder membros = new StringBuilder();
-        membros.append("{");
-        for(Usuario user : comunidade.getMembros()){
-            membros.append(user.getLogin());
-            if(comunidade.getMembros().indexOf(user) != comunidade.getMembros().size()-1){
-                membros.append(",");
-            }
+        List<Usuario> membros = comunidade.getMembros();
+
+        //cria uma lista de logins dos membros
+        List<String> membrosString = new ArrayList<>();
+        for(Usuario user : membros){
+            membrosString.add(user.getLogin());
         }
-        membros.append("}");
-        return membros.toString();
+
+        return "{" + String.join(",", membrosString) + "}"; //retorna os membros em uma string
     }
 }
