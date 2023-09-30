@@ -20,18 +20,17 @@ public class Facade {
     private Map<String, Comunidade> comunidades;
 
     //ao iniciar o programa estabelece o arquivo txt de usuarios ou le o existente
-    public Facade(){
-        try{
+    public Facade() {
+        try {
             //verifica se ja arquivo ja existe. se nao, cria um novo
-            if(!new File("usuarios.txt").exists()){
+            if (!new File("usuarios.txt").exists()) {
                 new File("usuarios.txt").createNewFile();
                 this.usuarioLogado = null;
                 this.usuarios = new HashMap<>();
                 this.sessoes = new HashMap<>();
                 //milestone 2///////////////////////
                 this.comunidades = new HashMap<>();
-            }
-            else{
+            } else {
                 this.usuarioLogado = null;
                 this.usuarios = new HashMap<>();
                 this.sessoes = new HashMap<>();
@@ -39,18 +38,18 @@ public class Facade {
                 this.comunidades = new HashMap<>();
                 //buffered reader é melhor para ler arquivos grandes
                 BufferedReader reader = new BufferedReader(new FileReader("usuarios.txt"));
-                String line;    
-                while((line = reader.readLine()) != null){
+                String line;
+                while ((line = reader.readLine()) != null) {
                     String[] user = line.split(";", -1); //limit:-1 == se nao tiver nada, NAO IGNORA
                     //define o atributo como vazio se nao tiver nome
                     String item = "";
 
-                    if(user[2]!= null){
+                    if (user[2] != null) {
                         item = user[2];
                     }
                     Usuario usuario = new Usuario(user[0], user[1], item);
                     //adiciona os atributos
-                    if(usuario.getAtributos()!=null){
+                    if (usuario.getAtributos() != null) {
                         for (int i = 3; i < user.length; i += 2) {
                             usuario.getAtributos().add(new Atributo(user[i], user[i + 1]));
                         }
@@ -58,8 +57,23 @@ public class Facade {
                     usuarios.put(user[0], usuario);
                 }
                 reader.close();
+                //le o arquivo de comunidades
+                BufferedReader reader2 = new BufferedReader(new FileReader("comunidades.txt"));
+                String line2;
+                while ((line2 = reader2.readLine()) != null) {
+                    String[] comunidade = line2.split(";", -1);
+                    String nome = comunidade[0];
+                    String descricao = comunidade[1];
+                    String dono = comunidade[2];
+                    Comunidade novaComunidade = new Comunidade(nome, descricao, usuarios.get(dono));
+                    //adiciona os membros
+                    for (int i = 3; i < comunidade.length; i++) {
+                        novaComunidade.getMembros().add(usuarios.get(comunidade[i]));
+                    }
+                    comunidades.put(nome, novaComunidade);
+                }
             }
-        } catch (IOException e) {
+        } catch(IOException e){
             e.printStackTrace();
         }
     }
@@ -135,6 +149,7 @@ public class Facade {
         //escreve no arquivo de usuarios
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("usuarios.txt"));
+            BufferedWriter writer2 = new BufferedWriter(new FileWriter("comunidades.txt"));
             for(Usuario user : usuarios.values()){
                 writer.write(user.getLogin()+";"+user.getSenha()+";"+user.getNome());
                 //tambem grava os atributos
@@ -144,6 +159,16 @@ public class Facade {
                 writer.newLine();
             }
             writer.close();
+            for(Comunidade comunidade : comunidades.values()){
+                writer2.write(comunidade.getNome()+";"+comunidade.getDescricao()+";"+comunidade.getDono().getLogin());
+                for(Usuario user : comunidade.getMembros()){
+                    writer2.write(";"+user.getLogin());
+                }
+                writer2.newLine();
+            }
+            //escreve os membros
+            writer2.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
