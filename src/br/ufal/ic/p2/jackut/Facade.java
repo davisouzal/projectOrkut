@@ -1,10 +1,7 @@
 package br.ufal.ic.p2.jackut;
 
 import br.ufal.ic.p2.jackut.Exceptions.*;
-import br.ufal.ic.p2.jackut.models.Atributo;
-import br.ufal.ic.p2.jackut.models.Comunidade;
-import br.ufal.ic.p2.jackut.models.Usuario;
-import br.ufal.ic.p2.jackut.models.Recado;
+import br.ufal.ic.p2.jackut.models.*;
 
 import java.io.*;
 import java.util.*;
@@ -350,5 +347,34 @@ public class Facade {
         comunidades.get(nome).getMembros().add(user);
         Comunidade comunidade = comunidades.get(nome);
         user.getComunidades().put(nome, comunidade);
+    }
+
+    public String lerMensagem(String id) throws UserNotFoundException, NaoHaMensagensException{
+        Usuario user = sessoes.get(id);
+        if(user == null){
+            throw new UserNotFoundException();
+        }
+        if (!usuarios.containsKey(user.getLogin())){
+            throw new UserNotFoundException();
+        }
+
+        return user.lerMensagem();
+    }
+
+    public void enviarMensagem(String id, String comunidade, String mensagem) throws UserNotFoundException, ComunidadeNaoEncontradaException {
+        Usuario user = sessoes.get(id);
+        if(user == null){
+            throw new UserNotFoundException();
+        }
+        if (!usuarios.containsKey(user.getLogin())){
+            throw new UserNotFoundException();
+        }
+        Comunidade comunidadeEnvio = comunidades.get(comunidade);
+        if(!comunidades.containsKey(comunidade)){
+            throw new ComunidadeNaoEncontradaException();
+        }
+        Mensagem message = new Mensagem(mensagem);
+
+        comunidadeEnvio.enviarMensagem(message);
     }
 }

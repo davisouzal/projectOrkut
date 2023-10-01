@@ -1,5 +1,7 @@
 package br.ufal.ic.p2.jackut.models;
 
+import br.ufal.ic.p2.jackut.Exceptions.NaoHaMensagensException;
+
 import java.util.*;
 
 
@@ -20,6 +22,7 @@ public class Usuario {
     private final List<Usuario> amigo = new ArrayList<>();
     //milestone2
     private final Map<String, Comunidade> comunidades = new LinkedHashMap<>(); //deixei como linked pq por algum motivo o teste qria q fosse em ordem
+    private final Queue<Mensagem> mensagens = new LinkedList<>();
 
     public Usuario(String login, String senha, String nome) {
         this.login = login;
@@ -95,4 +98,19 @@ public class Usuario {
         return comunidades;
     }
 
+    public void receberMensagem(Mensagem mensagem) {
+        this.mensagens.add(mensagem);
+    }
+
+    public String lerMensagem() throws NaoHaMensagensException{
+        if(this.mensagens.isEmpty()){
+            throw new NaoHaMensagensException();
+        }
+
+        return this.mensagens.poll().getMensagem();
+    }
+
+    public Queue<Mensagem> getMensagens() {
+        return  this.mensagens;
+    }
 }

@@ -8,12 +8,13 @@ public class Comunidade {
     private final String descricaoComunidade;
     private final Usuario dono;
 
-    private final List<Usuario> membros = new ArrayList<>();
+    private final ArrayList<Usuario> membros = new ArrayList<>();
 
     public Comunidade(String nome, String descricao, Usuario dono) {
         this.nome = nome;
         this.descricaoComunidade = descricao;
         this.dono = dono;
+        this.membros.add(dono);
     }
 
     public String getNome() {
@@ -31,4 +32,11 @@ public class Comunidade {
     public List<Usuario> getMembros() {
         return membros;
     }
+
+    public void enviarMensagem(Mensagem mensagem) {
+        for (Usuario membro : membros) {
+            membro.receberMensagem(mensagem);
+        }
+    }
+
 }
