@@ -1,6 +1,7 @@
 package br.ufal.ic.p2.jackut.models;
 
 import br.ufal.ic.p2.jackut.Exceptions.NaoHaMensagensException;
+import br.ufal.ic.p2.jackut.utils.Formater;
 
 import java.util.*;
 
@@ -23,6 +24,11 @@ public class Usuario {
     //milestone2
     private final Map<String, Comunidade> comunidades = new LinkedHashMap<>(); //deixei como linked pq por algum motivo o teste qria q fosse em ordem
     private final Queue<Mensagem> mensagens = new LinkedList<>();
+    private final ArrayList<Usuario> idolos = new ArrayList<>();
+    private final ArrayList<Usuario> fas = new ArrayList<>();
+    private final ArrayList<Usuario> paqueras = new ArrayList<>();
+    private final ArrayList<Usuario> paquerasRecebidas = new ArrayList<>();
+    private final ArrayList<Usuario> inimigos = new ArrayList<>();
 
     public Usuario(String login, String senha, String nome) {
         this.login = login;
@@ -102,9 +108,67 @@ public class Usuario {
         this.mensagens.add(mensagem);
     }
 
+<<<<<<< Updated upstream
+=======
+    public Mensagem lerMensagem() throws NaoHaMensagensException{
+        if(this.mensagens.isEmpty()){
+            throw new NaoHaMensagensException();
+        }
+
+        return this.mensagens.poll();
+    }
+>>>>>>> Stashed changes
 
     public Queue<Mensagem> getMensagens() {
-        return  this.mensagens;
+        return this.mensagens;
+    }
+
+    public void setIdolo(Usuario usuario) {
+        this.idolos.add(usuario);
+    }
+
+    public void setFa(Usuario usuario) {
+        this.fas.add(usuario);
+    }
+
+    public ArrayList<Usuario> getIdolos() {
+        return this.idolos;
+    }
+
+    public ArrayList<Usuario> getFas() {
+        return this.fas;
+    }
+
+    public String getFasString() {
+        return Formater.format(this.fas);
+    }
+
+    public void setPaquera(Usuario usuario) {
+        this.paqueras.add(usuario);
+    }
+
+    public void setPaquerasRecebidas(Usuario usuario) {
+        this.paquerasRecebidas.add(usuario);
+    }
+
+    public ArrayList<Usuario> getPaqueras() {
+        return this.paqueras;
+    }
+
+    public ArrayList<Usuario> getPaquerasRecebidas() {
+        return this.paquerasRecebidas;
+    }
+
+    public String getPaquerasString() {
+        return Formater.format(this.paqueras);
+    }
+
+    public void setInimigo(Usuario usuario) {
+        this.inimigos.add(usuario);
+    }
+
+    public ArrayList<Usuario> getInimigos() {
+        return this.inimigos;
     }
 
     public Mensagem LerMensagem() throws NaoHaMensagensException {

@@ -2,6 +2,7 @@ package br.ufal.ic.p2.jackut;
 
 import br.ufal.ic.p2.jackut.Exceptions.*;
 import br.ufal.ic.p2.jackut.models.*;
+import br.ufal.ic.p2.jackut.utils.Formater;
 
 import java.io.*;
 import java.util.*;
@@ -362,7 +363,11 @@ public class Facade {
         }
         Mensagem mensagem = user.getMensagens().poll();
 
+<<<<<<< Updated upstream
         return mensagem.getMensagem();
+=======
+        return user.lerMensagem().getMensagem();
+>>>>>>> Stashed changes
     }
 
     public void enviarMensagem(String id, String comunidade, String mensagem) throws UserNotFoundException, ComunidadeNaoEncontradaException {
@@ -380,5 +385,115 @@ public class Facade {
         Mensagem message = new Mensagem(mensagem);
 
         comunidadeEnvio.enviarMensagem(message);
+    }
+
+    public boolean ehFa(String login, String idolo) throws UserNotFoundException{
+        if (!this.usuarios.containsKey(login) || !this.usuarios.containsKey(idolo)){
+            throw new UserNotFoundException();
+        }
+        Usuario user = this.usuarios.get(login);
+        if(user == null){
+            throw new UserNotFoundException();
+        }
+        Usuario idol = this.usuarios.get(idolo);
+        if(idolo == null){
+            throw new UserNotFoundException();
+        }
+
+        return idol.getFas().contains(user);
+    }
+
+    public void adicionarIdolo(String id, String idolo) throws UserNotFoundException, ExistentRelantionshipException, AutoRelationshipException, AlreadyEnemyException{
+        if (!this.usuarios.containsKey(id) || !this.usuarios.containsKey(idolo)){
+            throw new UserNotFoundException();
+        }
+        Usuario user = this.sessoes.get(id);
+        Usuario idol = this.usuarios.get(idolo);
+        if(user == null || idol == null){
+            throw new UserNotFoundException();
+        }
+        if(user.equals(idol)){
+            throw new AutoRelationshipException("fã");
+        }
+        if(user.getIdolos().contains(idol)) {
+            throw new ExistentRelantionshipException("ídolo");
+        }
+        if(user.getInimigos().contains(idol)) {
+            throw new AlreadyEnemyException(idol.getNome());
+        }
+
+        user.setIdolo(idol);
+        idol.setFa(user);
+    }
+
+    public String getFas(String id) throws UserNotFoundException {
+        Usuario user = sessoes.get(id);
+        return Formater.format(user.getFas());
+    }
+
+    public boolean ehPaquera(String id, String paquera) throws UserNotFoundException, AutoRelationshipException,ExistentRelantionshipException, AlreadyEnemyException {
+        if (!this.usuarios.containsKey(id) || !this.usuarios.containsKey(paquera)){
+            throw new UserNotFoundException();
+        }
+        Usuario user = this.sessoes.get(id);
+        Usuario paquerado = this.usuarios.get(paquera);
+        if(user == null || paquerado == null){
+            throw new UserNotFoundException();
+        }
+        if(user.getInimigos().contains(paquerado)) {
+            throw new AlreadyEnemyException(paquerado.getNome());
+        }
+
+        return user.getPaqueras().contains(paquerado);
+    }
+
+    public void adicionarPaquera(String id, String paquera) throws UserNotFoundException, ExistentRelantionshipException, AlreadyEnemyException{
+        if (!this.usuarios.containsKey(id) || !this.usuarios.containsKey(paquera)){
+            throw new UserNotFoundException();
+        }
+        Usuario user = this.sessoes.get(id);
+        Usuario paquerado = this.usuarios.get(paquera);
+        if(user == null || paquerado == null){
+            throw new UserNotFoundException();
+        }
+        if(user.getInimigos().contains(paquerado)) {
+            throw new AlreadyEnemyException(paquerado.getNome());
+        }
+
+        if(user.getPaquerasRecebidas().contains(paquerado) || paquerado.getPaquerasRecebidas().contains(user)){
+            this.enviarRecado(user.getNome(), paquerado.getNome(), user.getNome() + " é seu paquera - Recado do Jackut.");
+            this.enviarRecado(paquerado.getNome(), user.getNome(), paquerado.getNome() + " é seu paquera - Recado do Jackut.");
+        }
+
+        user.setPaquera(paquerado);
+        paquerado.setPaquerasRecebidas(user);
+    }
+
+    public String getPaqueras(String id) throws UserNotFoundException {
+        Usuario user = this.sessoes.get(id);
+        if(user == null || !usuarios.containsKey(user.getLogin())){
+            throw new UserNotFoundException();
+        }
+        return Formater.format(user.getPaqueras());
+    }
+
+    public void adicionarInimigo(String id, String inimigo) throws UserNotFoundException, ExistentRelantionshipException, AutoRelationshipException{
+        if (!this.usuarios.containsKey(id) || !this.usuarios.containsKey(inimigo)){
+            throw new UserNotFoundException();
+        }
+        Usuario user = this.sessoes.get(id);
+        Usuario enemy = this.usuarios.get(inimigo);
+        if(user == null || enemy == null){
+            throw new UserNotFoundException();
+        }
+        if(user.equals(enemy)) {
+            throw new AutoRelationshipException("inimigo");
+        }
+        if(user.getInimigos().contains(enemy)){
+            throw new ExistentRelantionshipException("inimigo");
+        }
+
+        user.setInimigo(enemy);
+        enemy.setInimigo(user);
     }
 }

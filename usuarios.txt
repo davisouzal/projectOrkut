@@ -1,3 +1,11 @@
-jdoe;abc;John Doe
 jpsauve;sauvejp;Jacques Sauve
-oabath;abatho;Osorio Abath
+fadejacques;seuqcajedaf;Fã de Jacques
+paquera2dejacques;abcdef;Paquera 2 de Jacques
+inimigo2dejacques;abcdef;Inimigo 2 de Jacques
+jacquespersistente;abcdef;Jacques Persistente
+fapersistentedejacques;seuqcajedaf;Fã Persistente de Jacques
+fa2dejacques;seuqcajedaf;Fã 2 de Jacques
+paqueradejacques;abcdef;Paquera de Jacques
+inimigopersistentedejacques;abcdef;Inimigo Persistente de Jacques
+inimigodejacques;abcdef;Inimigo de Jacques
+paquerapersistentedejacques;abcdef;Paquera Persistente de Jacques
