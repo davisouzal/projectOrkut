@@ -102,15 +102,15 @@ public class Usuario {
         this.mensagens.add(mensagem);
     }
 
-    public String lerMensagem() throws NaoHaMensagensException{
-        if(this.mensagens.isEmpty()){
-            throw new NaoHaMensagensException();
-        }
-
-        return this.mensagens.poll().getMensagem();
-    }
 
     public Queue<Mensagem> getMensagens() {
         return  this.mensagens;
+    }
+
+    public Mensagem LerMensagem() throws NaoHaMensagensException {
+        if (this.mensagens.isEmpty()) {
+            throw new NaoHaMensagensException();
+        }
+        return this.mensagens.poll();
     }
 }

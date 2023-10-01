@@ -277,7 +277,7 @@ public class Facade {
         usuario.criarComunidade(nome, descricao);
 
         Comunidade novaComunidade = usuario.getComunidades().get(nome);
-        novaComunidade.getMembros().add(usuario);
+        //de alguma forma ele ja adiciona o dono automaticamente
         comunidades.put(nome, novaComunidade);
     }
 
@@ -357,8 +357,12 @@ public class Facade {
         if (!usuarios.containsKey(user.getLogin())){
             throw new UserNotFoundException();
         }
+        if(user.getMensagens().isEmpty()){
+            throw new NaoHaMensagensException();
+        }
+        Mensagem mensagem = user.getMensagens().poll();
 
-        return user.lerMensagem();
+        return mensagem.getMensagem();
     }
 
     public void enviarMensagem(String id, String comunidade, String mensagem) throws UserNotFoundException, ComunidadeNaoEncontradaException {
