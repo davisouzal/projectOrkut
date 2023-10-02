@@ -419,9 +419,15 @@ public class Facade {
 
     }
 
-    public String getFas(String id) throws UserNotFoundException {
-        Usuario user = sessoes.get(id);
-        return Formater.format(user.getFas());
+    public String getFas(String login) throws UserNotFoundException {
+        if (!this.usuarios.containsKey(login)){
+            throw new UserNotFoundException();
+        };
+        Usuario user = this.usuarios.get(login);
+        if(user == null){
+            throw new UserNotFoundException();
+        }
+        return user.getFasString();
     }
 
     public boolean ehPaquera(String id, String paquera) throws UserNotFoundException, AutoRelationshipException,ExistentRelantionshipException, AlreadyEnemyException {
