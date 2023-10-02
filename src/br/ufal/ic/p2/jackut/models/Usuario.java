@@ -11,7 +11,7 @@ public class Usuario {
     private final String senha;
     private final String nome;
 
-    private final Queue<Recado> recados;
+    private final Queue<Recado> recados = new LinkedList<>();
 
     //exemplo: nome: "nome", valor: "joao"
     private final List<Atributo> atributos = new ArrayList<>();
@@ -34,7 +34,6 @@ public class Usuario {
         this.login = login;
         this.senha = senha;
         this.nome = nome;
-        this.recados = new LinkedList<>();
 
     }
 
@@ -137,9 +136,6 @@ public class Usuario {
         return this.fas;
     }
 
-    public String getFasString() {
-        return Formater.format(this.fas);
-    }
 
     public void setPaquera(Usuario usuario) {
         this.paqueras.add(usuario);

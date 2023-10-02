@@ -19,4 +19,3 @@ expectError "Não há mensagens." lerMensagem id=${s2}
 expectError "Não há mensagens." lerMensagem id=${s3}
 
 encerrarSistema
-quit

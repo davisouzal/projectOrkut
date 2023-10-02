@@ -106,4 +106,3 @@ expectError "Usuário não cadastrado." enviarMensagem id=${s4} comunidade="Comuni
 expectError "Comunidade não existe." enviarMensagem id=${s1}  comunidade="Comunidade fantasma" mensagem="Mensagem de Jacques para uma comunidade fantasma."
 
 encerrarSistema
-quit

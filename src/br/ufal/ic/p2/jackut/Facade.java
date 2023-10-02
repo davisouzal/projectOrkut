@@ -8,7 +8,7 @@ import java.io.*;
 import java.util.*;
 
 public class Facade {
-    public static final String USER_NOT_FOUND= "Usuário não cadastrado.";
+    public static final String USER_NOT_FOUND = "Usuário não cadastrado.";
     private Map<String, Usuario> usuarios;
     private Usuario usuarioLogado;
 
@@ -71,11 +71,10 @@ public class Facade {
                     comunidades.put(nome, novaComunidade);
                 }
             }
-        } catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 
 
     public void criarUsuario(String login, String senha, String nome) {
@@ -83,7 +82,7 @@ public class Facade {
             throw new LoginInvalidoException();
         }
 
-        if( senha == null || senha.isEmpty()) {
+        if (senha == null || senha.isEmpty()) {
             throw new SenhaInvalidaException();
         }
 
@@ -116,13 +115,12 @@ public class Facade {
         Usuario user = usuarios.get(login);
 
         if (usuarios.containsKey(login)) {
-            if(atributo.equals("nome")){
+            if (atributo.equals("nome")) {
                 return usuarios.get(login).getNome();
             }
-            if(user.getAtributo(atributo)!=null){
+            if (user.getAtributo(atributo) != null) {
                 return user.getAtributo(atributo).getValor();
-            }
-            else{
+            } else {
                 throw new AtributoNaoPreenchidoException();
             }
         } else {
@@ -148,19 +146,19 @@ public class Facade {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("usuarios.txt"));
             BufferedWriter writer2 = new BufferedWriter(new FileWriter("comunidades.txt"));
-            for(Usuario user : usuarios.values()){
-                writer.write(user.getLogin()+";"+user.getSenha()+";"+user.getNome());
+            for (Usuario user : usuarios.values()) {
+                writer.write(user.getLogin() + ";" + user.getSenha() + ";" + user.getNome());
                 //tambem grava os atributos
-                for(Atributo atributo : user.getAtributos()){
-                    writer.write(";" + atributo.getNome()+";"+atributo.getValor());
+                for (Atributo atributo : user.getAtributos()) {
+                    writer.write(";" + atributo.getNome() + ";" + atributo.getValor());
                 }
                 writer.newLine();
             }
             writer.close();
-            for(Comunidade comunidade : comunidades.values()){
-                writer2.write(comunidade.getNome()+";"+comunidade.getDescricao()+";"+comunidade.getDono().getLogin());
-                for(Usuario user : comunidade.getMembros()){
-                    writer2.write(";"+user.getLogin());
+            for (Comunidade comunidade : comunidades.values()) {
+                writer2.write(comunidade.getNome() + ";" + comunidade.getDescricao() + ";" + comunidade.getDono().getLogin());
+                for (Usuario user : comunidade.getMembros()) {
+                    writer2.write(";" + user.getLogin());
                 }
                 writer2.newLine();
             }
@@ -181,39 +179,40 @@ public class Facade {
 
         }
     }
-    public Boolean ehAmigo(String login, String loginAmigo){
+
+    public Boolean ehAmigo(String login, String loginAmigo) {
         Usuario user = usuarios.get(login);
         Usuario userAmigo = usuarios.get(loginAmigo);
         return user.getAmigo().contains(userAmigo) && userAmigo.getAmigo().contains(user);
     }
 
     //send friend request, se o amigo ja tiver mandado um, adiciona na lista de amigo de ambos
-    public void adicionarAmigo(String id, String loginAmigo){
+    public void adicionarAmigo(String id, String loginAmigo) {
         //pega o usuario das sessoes com o seu id de sessao
         Usuario user = sessoes.get(id);
-        if (user == null ){
+        if (user == null) {
             throw new RuntimeException(USER_NOT_FOUND);
         }
         abrirSessao(user.getLogin(), user.getSenha());
         Usuario userAmigo = usuarios.get(loginAmigo);
-        if(userAmigo == null){
+        if (userAmigo == null) {
             throw new RuntimeException(USER_NOT_FOUND);
         }
-        if(ehAmigo(user.getLogin(), userAmigo.getLogin())){
+        if (ehAmigo(user.getLogin(), userAmigo.getLogin())) {
             throw new AmigoJaAdicionadoException();
         }
-        if(user.getConviteAmigos().contains(userAmigo) && !userAmigo.getConviteAmigos().contains(user)){
+        if (user.getConviteAmigos().contains(userAmigo) && !userAmigo.getConviteAmigos().contains(user)) {
             throw new EsperandoConviteException();
         }
-        if(user.getAmigo().contains(userAmigo) && userAmigo.getAmigo().contains(user)){
+        if (user.getAmigo().contains(userAmigo) && userAmigo.getAmigo().contains(user)) {
             throw new AmigoJaAdicionadoException();
         }
-        if(user.getLogin().equals(userAmigo.getLogin())){
+        if (user.getLogin().equals(userAmigo.getLogin())) {
             throw new SelfRequestException();
         }
         user.getConviteAmigos().add(userAmigo);
         //se o amigo ja tiver mandado um, adiciona na lista de amigo de ambos
-        if(userAmigo.getConviteAmigos().contains(user)){
+        if (userAmigo.getConviteAmigos().contains(user)) {
             user.getAmigo().add(userAmigo);
             userAmigo.getAmigo().add(user);
             user.getConviteAmigos().remove(userAmigo);
@@ -221,14 +220,15 @@ public class Facade {
         }
 
     }
+
     //amigos adicionados do usuario do login no header
-    public String getAmigos(String login){
+    public String getAmigos(String login) {
         Usuario user = usuarios.get(login);
         StringBuilder amigos = new StringBuilder();
         amigos.append("{");
-        for(Usuario amigo : user.getAmigo()){
+        for (Usuario amigo : user.getAmigo()) {
             amigos.append(amigo.getLogin());
-            if(user.getAmigo().indexOf(amigo) != user.getAmigo().size()-1){
+            if (user.getAmigo().indexOf(amigo) != user.getAmigo().size() - 1) {
                 amigos.append(",");
             }
         }
@@ -239,17 +239,20 @@ public class Facade {
 
     public void enviarRecado(String id, String destinatario, String mensagem) throws UserNotFoundException {
         Usuario sender = sessoes.get(id);
-        Usuario reciever = usuarios.get(destinatario);
-        if(sender == null || reciever == null){
+        Usuario receiver = usuarios.get(destinatario);
+        if (sender == null || receiver == null) {
             throw new UserNotFoundException();
         }
 
-        if (sender.getLogin().equals(reciever.getLogin())){
+        if (sender.getLogin().equals(receiver.getLogin())) {
             throw new SelfRecadoException();
         }
+        Recado recado = new Recado(sender, receiver, mensagem);
+        receiver.getRecados().add(recado);
 
-        sender.enviarRecado(reciever, mensagem);
+
     }
+
     public String lerRecado(String id) throws UserNotFoundException, NaoHaRecadosException {
         Usuario usuario = sessoes.get(id);
 
@@ -272,7 +275,7 @@ public class Facade {
         if (usuario == null) {
             throw new UserNotFoundException();
         }
-        if(comunidades.containsKey(nome)){
+        if (comunidades.containsKey(nome)) {
             throw new ComunidadeJaExisteException();
         }
         usuario.criarComunidade(nome, descricao);
@@ -283,22 +286,22 @@ public class Facade {
     }
 
     public String getDescricaoComunidade(String nome) throws ComunidadeNaoEncontradaException {
-        if(!comunidades.containsKey(nome)){
+        if (!comunidades.containsKey(nome)) {
             throw new ComunidadeNaoEncontradaException();
         }
         return comunidades.get(nome).getDescricao();
     }
 
-    public String getDonoComunidade(String nomeComunidade) throws ComunidadeNaoEncontradaException{
-        if(!comunidades.containsKey(nomeComunidade)){
+    public String getDonoComunidade(String nomeComunidade) throws ComunidadeNaoEncontradaException {
+        if (!comunidades.containsKey(nomeComunidade)) {
             throw new ComunidadeNaoEncontradaException();
         }
         return comunidades.get(nomeComunidade).getDono().getLogin();
     }
 
-    public String getMembrosComunidade(String nomeComunidade) throws ComunidadeNaoEncontradaException{
+    public String getMembrosComunidade(String nomeComunidade) throws ComunidadeNaoEncontradaException {
         //checa se comunidade existe
-        if(!comunidades.containsKey(nomeComunidade)){
+        if (!comunidades.containsKey(nomeComunidade)) {
             throw new ComunidadeNaoEncontradaException();
         }
         //pega comunidade e os membros
@@ -307,7 +310,7 @@ public class Facade {
 
         //cria uma lista de logins dos membros
         List<String> membrosString = new ArrayList<>();
-        for(Usuario user : membros){
+        for (Usuario user : membros) {
             membrosString.add(user.getLogin());
         }
 
@@ -315,14 +318,14 @@ public class Facade {
     }
 
     //get Comunidades
-    public String getComunidades(String login){
+    public String getComunidades(String login) {
         Usuario user = usuarios.get(login);
-        if(user == null){
+        if (user == null) {
             throw new UserNotFoundException();
         }
 
         List<String> comunidadesString = new ArrayList<>();
-        for(Comunidade comunidade : user.getComunidades().values()){
+        for (Comunidade comunidade : user.getComunidades().values()) {
             comunidadesString.add(comunidade.getNome());
         }
 
@@ -330,18 +333,18 @@ public class Facade {
     }
 
     //adicionar Comunidades, adiciona usuario na lista de membros da comunidade
-    public void adicionarComunidade(String id, String nome){
+    public void adicionarComunidade(String id, String nome) {
         Usuario user = sessoes.get(id);
-        if(user == null){
+        if (user == null) {
             throw new UserNotFoundException();
         }
-        if (!usuarios.containsKey(user.getLogin())){
+        if (!usuarios.containsKey(user.getLogin())) {
             throw new UserNotFoundException();
         }
-        if(!comunidades.containsKey(nome)){
+        if (!comunidades.containsKey(nome)) {
             throw new ComunidadeNaoEncontradaException();
         }
-        if(user.getComunidades().containsKey(nome)){
+        if (user.getComunidades().containsKey(nome)) {
             throw new UsuarioJaEstaNaComunidadeException();
         }
         //adiciona usuario na comunidade e comunidade no perfil do usuario
@@ -350,15 +353,15 @@ public class Facade {
         user.getComunidades().put(nome, comunidade);
     }
 
-    public String lerMensagem(String id) throws UserNotFoundException, NaoHaMensagensException{
+    public String lerMensagem(String id) throws UserNotFoundException, NaoHaMensagensException {
         Usuario user = sessoes.get(id);
-        if(user == null){
+        if (user == null) {
             throw new UserNotFoundException();
         }
-        if (!usuarios.containsKey(user.getLogin())){
+        if (!usuarios.containsKey(user.getLogin())) {
             throw new UserNotFoundException();
         }
-        if(user.getMensagens().isEmpty()){
+        if (user.getMensagens().isEmpty()) {
             throw new NaoHaMensagensException();
         }
         Mensagem mensagem = user.getMensagens().poll();
@@ -368,14 +371,14 @@ public class Facade {
 
     public void enviarMensagem(String id, String comunidade, String mensagem) throws UserNotFoundException, ComunidadeNaoEncontradaException {
         Usuario user = sessoes.get(id);
-        if(user == null){
+        if (user == null) {
             throw new UserNotFoundException();
         }
-        if (!usuarios.containsKey(user.getLogin())){
+        if (!usuarios.containsKey(user.getLogin())) {
             throw new UserNotFoundException();
         }
         Comunidade comunidadeEnvio = comunidades.get(comunidade);
-        if(!comunidades.containsKey(comunidade)){
+        if (!comunidades.containsKey(comunidade)) {
             throw new ComunidadeNaoEncontradaException();
         }
         Mensagem message = new Mensagem(mensagem, user);
@@ -383,34 +386,35 @@ public class Facade {
         comunidadeEnvio.enviarMensagem(message);
     }
 
-    public boolean ehFa(String login, String idolo) throws UserNotFoundException{
-        if (!this.usuarios.containsKey(login) || !this.usuarios.containsKey(idolo)){
+    public boolean ehFa(String login, String idolo) throws UserNotFoundException {
+        if (!this.usuarios.containsKey(login) || !this.usuarios.containsKey(idolo)) {
             throw new UserNotFoundException();
         }
         Usuario user = this.usuarios.get(login);
         Usuario idol = this.usuarios.get(idolo);
-        if((user == null) || (idol == null)){
+        if ((user == null) || (idol == null)) {
             throw new UserNotFoundException();
         }
         return idol.getFas().contains(user);
     }
 
-    public void adicionarIdolo(String id, String idolo) throws UserNotFoundException, ExistentRelantionshipException, AutoRelationshipException, AlreadyEnemyException{
-        if (!this.usuarios.containsKey(idolo)){
+    public void adicionarIdolo(String id, String idolo) throws UserNotFoundException, ExistentRelantionshipException, AutoRelationshipException, AlreadyEnemyException {
+        if (!this.usuarios.containsKey(idolo)) {
             throw new UserNotFoundException();
-        };
+        }
+        ;
         Usuario user = this.sessoes.get(id);
         Usuario idol = this.usuarios.get(idolo);
-        if(user == null || idol == null){
+        if (user == null || idol == null) {
             throw new UserNotFoundException();
         }
-        if(user.equals(idol)){
+        if (user.equals(idol)) {
             throw new AutoRelationshipException("fã");
         }
-        if(user.getIdolos().contains(idol)) {
+        if (user.getIdolos().contains(idol)) {
             throw new ExistentRelantionshipException("ídolo");
         }
-        if(user.getInimigos().contains(idol)) {
+        if (user.getInimigos().contains(idol)) {
             throw new AlreadyEnemyException(idol.getNome());
         }
 
@@ -419,76 +423,101 @@ public class Facade {
 
     }
 
+    //retorna fans em formato de string json
     public String getFas(String login) throws UserNotFoundException {
-        if (!this.usuarios.containsKey(login)){
-            throw new UserNotFoundException();
-        };
-        Usuario user = this.usuarios.get(login);
-        if(user == null){
+        if (!this.usuarios.containsKey(login)) {
             throw new UserNotFoundException();
         }
-        return user.getFasString();
+        ;
+        Usuario user = this.usuarios.get(login);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        //S
+        StringBuilder fas = new StringBuilder();
+        fas.append("{");
+        //itera por todos os fans do usuario
+        for (Usuario fa : user.getFas()) {
+            fas.append(fa.getLogin());
+            if (user.getFas().indexOf(fa) != user.getFas().size() - 1) {
+                fas.append(",");
+            }
+        }
+        fas.append("}");
+        return fas.toString();
     }
 
-    public boolean ehPaquera(String id, String paquera) throws UserNotFoundException, AutoRelationshipException,ExistentRelantionshipException, AlreadyEnemyException {
-        if (!this.usuarios.containsKey(paquera)){
+    public boolean ehPaquera(String id, String paquera) throws UserNotFoundException, AutoRelationshipException, ExistentRelantionshipException, AlreadyEnemyException {
+        if (!this.usuarios.containsKey(paquera)) {
             throw new UserNotFoundException();
         }
         Usuario user = this.sessoes.get(id);
         Usuario paquerado = this.usuarios.get(paquera);
-        if(user == null || paquerado == null){
+        if (user == null || paquerado == null) {
             throw new UserNotFoundException();
         }
-        if(user.getInimigos().contains(paquerado)) {
+        if (user.getInimigos().contains(paquerado)) {
             throw new AlreadyEnemyException(paquerado.getNome());
         }
 
         return user.getPaqueras().contains(paquerado);
     }
 
-    public void adicionarPaquera(String id, String paquera) throws UserNotFoundException, ExistentRelantionshipException, AlreadyEnemyException{
-        if (!this.usuarios.containsKey(paquera)){
-            throw new UserNotFoundException();
-        }
+    public void adicionarPaquera(String id, String paquera) throws UserNotFoundException, AlreadyEnemyException {
         Usuario user = this.sessoes.get(id);
         Usuario paquerado = this.usuarios.get(paquera);
-        if(user == null || paquerado == null){
+
+        if (user == null || paquerado == null) {
             throw new UserNotFoundException();
+
         }
-        if(user.getInimigos().contains(paquerado)) {
+        if (user.getInimigos().contains(paquerado)) {
             throw new AlreadyEnemyException(paquerado.getNome());
         }
 
-        if(user.getPaquerasRecebidas().contains(paquerado) || paquerado.getPaquerasRecebidas().contains(user)){
+        if (user.getPaquerasRecebidas().contains(paquerado) || paquerado.getPaquerasRecebidas().contains(user)) {
             this.enviarRecado(user.getNome(), paquerado.getNome(), user.getNome() + " é seu paquera - Recado do Jackut.");
             this.enviarRecado(paquerado.getNome(), user.getNome(), paquerado.getNome() + " é seu paquera - Recado do Jackut.");
         }
+        //adiciona o parquerado a lista de paqueras do ususario
+        user.getPaqueras().add(paquerado);
+        //adiciona o usuario a lista de paqueras recebidas do paquerado
+        paquerado.getPaquerasRecebidas().add(user);
 
-        user.setPaquera(paquerado);
-        paquerado.setPaquerasRecebidas(user);
-    }
+        }
 
     public String getPaqueras(String id) throws UserNotFoundException {
         Usuario user = this.sessoes.get(id);
-        if(user == null || !usuarios.containsKey(user.getLogin())){
+        if (user == null || !usuarios.containsKey(user.getLogin())) {
             throw new UserNotFoundException();
         }
-        return Formater.format(user.getPaqueras());
+        //itera por todos os paqueras do usuario
+        StringBuilder paquerasJson = new StringBuilder();
+        paquerasJson.append("{");
+        for (Usuario paquera : user.getPaqueras()) {
+            paquerasJson.append(paquera.getLogin());
+            if (user.getPaqueras().indexOf(paquera) != user.getPaqueras().size() - 1) {
+                paquerasJson.append(",");
+            }
+        }
+        paquerasJson.append("}");
+        return paquerasJson.toString();
+
     }
 
-    public void adicionarInimigo(String id, String inimigo) throws UserNotFoundException, ExistentRelantionshipException, AutoRelationshipException{
-        if (!this.usuarios.containsKey(inimigo)){
+    public void adicionarInimigo(String id, String inimigo) throws UserNotFoundException, ExistentRelantionshipException, AutoRelationshipException {
+        if (!this.usuarios.containsKey(inimigo)) {
             throw new UserNotFoundException();
         }
         Usuario user = this.sessoes.get(id);
         Usuario enemy = this.usuarios.get(inimigo);
-        if(user == null || enemy == null){
+        if (user == null || enemy == null) {
             throw new UserNotFoundException();
         }
-        if(user.equals(enemy)) {
+        if (user.equals(enemy)) {
             throw new AutoRelationshipException("inimigo");
         }
-        if(user.getInimigos().contains(enemy)){
+        if (user.getInimigos().contains(enemy)) {
             throw new ExistentRelantionshipException("inimigo");
         }
 
@@ -496,28 +525,29 @@ public class Facade {
         enemy.setInimigo(user);
     }
 
-    public void removerUsuario(String id){
+    public void removerUsuario(String id) {
         Usuario user = this.sessoes.get(id);
-        if(user == null){
+        if (user == null) {
             throw new UserNotFoundException();
         }
         this.usuarios.remove(user.getLogin());
         this.sessoes.remove(id);
         //remove membro da comunidade e verifica se eh dono, se for remove tambem
-        for(Comunidade comunidade : this.comunidades.values()){
+        for (Comunidade comunidade : this.comunidades.values()) {
             comunidade.getMembros().remove(user);
-            if(comunidade.getDono().equals(user)){
+            if (comunidade.getDono().equals(user)) {
                 this.comunidades.remove(comunidade.getNome());
                 //remove os membros da comunidade tb
-                for(Usuario usuario : comunidade.getMembros()){
+                for (Usuario usuario : comunidade.getMembros()) {
                     usuario.getComunidades().remove(comunidade.getNome());
                 }
             }
         }
+
         //a comuidade do ususario
         user.getComunidades().clear();
         //relacionamentos e mensagens enviadas
-        for(Usuario usuario : this.usuarios.values()){
+        for (Usuario usuario : this.usuarios.values()) {
             usuario.getAmigo().remove(user);
             usuario.getConviteAmigos().remove(user);
             usuario.getPaqueras().remove(user);
@@ -534,3 +564,5 @@ public class Facade {
         }
     }
 }
+
+
