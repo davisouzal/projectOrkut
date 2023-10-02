@@ -11,7 +11,6 @@ public class Facade {
     public static final String USER_NOT_FOUND= "Usuário não cadastrado.";
     private Map<String, Usuario> usuarios;
     private Usuario usuarioLogado;
-
     private Map<String, Usuario> sessoes;
 
     //milestone 2
@@ -362,12 +361,7 @@ public class Facade {
             throw new NaoHaMensagensException();
         }
         Mensagem mensagem = user.getMensagens().poll();
-
-<<<<<<< Updated upstream
         return mensagem.getMensagem();
-=======
-        return user.lerMensagem().getMensagem();
->>>>>>> Stashed changes
     }
 
     public void enviarMensagem(String id, String comunidade, String mensagem) throws UserNotFoundException, ComunidadeNaoEncontradaException {
@@ -382,7 +376,7 @@ public class Facade {
         if(!comunidades.containsKey(comunidade)){
             throw new ComunidadeNaoEncontradaException();
         }
-        Mensagem message = new Mensagem(mensagem);
+        Mensagem message = new Mensagem(mensagem, user);
 
         comunidadeEnvio.enviarMensagem(message);
     }
@@ -495,5 +489,43 @@ public class Facade {
 
         user.setInimigo(enemy);
         enemy.setInimigo(user);
+    }
+
+    public void removerUsuario(String id){
+        Usuario user = this.sessoes.get(id);
+        if(user == null){
+            throw new UserNotFoundException();
+        }
+        this.usuarios.remove(user.getLogin());
+        this.sessoes.remove(id);
+        //remove membro da comunidade e verifica se eh dono, se for remove tambem
+        for(Comunidade comunidade : this.comunidades.values()){
+            comunidade.getMembros().remove(user);
+            if(comunidade.getDono().equals(user)){
+                this.comunidades.remove(comunidade.getNome());
+                //remove os membros da comunidade tb
+                for(Usuario usuario : comunidade.getMembros()){
+                    usuario.getComunidades().remove(comunidade.getNome());
+                }
+            }
+        }
+        //a comuidade do ususario
+        user.getComunidades().clear();
+        //relacionamentos e mensagens enviadas
+        for(Usuario usuario : this.usuarios.values()){
+            usuario.getAmigo().remove(user);
+            usuario.getConviteAmigos().remove(user);
+            usuario.getPaqueras().remove(user);
+            usuario.getPaquerasRecebidas().remove(user);
+            usuario.getInimigos().remove(user);
+            usuario.getFas().remove(user);
+            usuario.getIdolos().remove(user);
+            ;
+            //itera pelas mensagens
+            usuario.getMensagens().removeIf(mensagem -> mensagem.getRemetente().equals(user));
+            //itera pelos recados
+            usuario.getRecados().removeIf(recado -> recado.getRemetente().equals(user));
+
+        }
     }
 }
