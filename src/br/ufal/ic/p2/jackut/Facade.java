@@ -11,6 +11,7 @@ public class Facade {
     public static final String USER_NOT_FOUND= "Usuário não cadastrado.";
     private Map<String, Usuario> usuarios;
     private Usuario usuarioLogado;
+
     private Map<String, Usuario> sessoes;
 
     //milestone 2
@@ -362,6 +363,7 @@ public class Facade {
         }
         Mensagem mensagem = user.getMensagens().poll();
         return mensagem.getMensagem();
+
     }
 
     public void enviarMensagem(String id, String comunidade, String mensagem) throws UserNotFoundException, ComunidadeNaoEncontradaException {
@@ -386,21 +388,17 @@ public class Facade {
             throw new UserNotFoundException();
         }
         Usuario user = this.usuarios.get(login);
-        if(user == null){
-            throw new UserNotFoundException();
-        }
         Usuario idol = this.usuarios.get(idolo);
-        if(idolo == null){
+        if((user == null) || (idol == null)){
             throw new UserNotFoundException();
         }
-
         return idol.getFas().contains(user);
     }
 
     public void adicionarIdolo(String id, String idolo) throws UserNotFoundException, ExistentRelantionshipException, AutoRelationshipException, AlreadyEnemyException{
-        if (!this.usuarios.containsKey(id) || !this.usuarios.containsKey(idolo)){
+        if (!this.usuarios.containsKey(idolo)){
             throw new UserNotFoundException();
-        }
+        };
         Usuario user = this.sessoes.get(id);
         Usuario idol = this.usuarios.get(idolo);
         if(user == null || idol == null){
@@ -418,15 +416,22 @@ public class Facade {
 
         user.setIdolo(idol);
         idol.setFa(user);
+
     }
 
-    public String getFas(String id) throws UserNotFoundException {
-        Usuario user = sessoes.get(id);
-        return Formater.format(user.getFas());
+    public String getFas(String login) throws UserNotFoundException {
+        if (!this.usuarios.containsKey(login)){
+            throw new UserNotFoundException();
+        };
+        Usuario user = this.usuarios.get(login);
+        if(user == null){
+            throw new UserNotFoundException();
+        }
+        return user.getFasString();
     }
 
     public boolean ehPaquera(String id, String paquera) throws UserNotFoundException, AutoRelationshipException,ExistentRelantionshipException, AlreadyEnemyException {
-        if (!this.usuarios.containsKey(id) || !this.usuarios.containsKey(paquera)){
+        if (!this.usuarios.containsKey(paquera)){
             throw new UserNotFoundException();
         }
         Usuario user = this.sessoes.get(id);
@@ -442,7 +447,7 @@ public class Facade {
     }
 
     public void adicionarPaquera(String id, String paquera) throws UserNotFoundException, ExistentRelantionshipException, AlreadyEnemyException{
-        if (!this.usuarios.containsKey(id) || !this.usuarios.containsKey(paquera)){
+        if (!this.usuarios.containsKey(paquera)){
             throw new UserNotFoundException();
         }
         Usuario user = this.sessoes.get(id);
@@ -472,7 +477,7 @@ public class Facade {
     }
 
     public void adicionarInimigo(String id, String inimigo) throws UserNotFoundException, ExistentRelantionshipException, AutoRelationshipException{
-        if (!this.usuarios.containsKey(id) || !this.usuarios.containsKey(inimigo)){
+        if (!this.usuarios.containsKey(inimigo)){
             throw new UserNotFoundException();
         }
         Usuario user = this.sessoes.get(id);
