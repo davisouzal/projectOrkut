@@ -10,17 +10,11 @@ public class Main {
         };
         EasyAccept.main(args2);*/
         String[] args3 = {"br.ufal.ic.p2.jackut.Facade",
-<<<<<<< Updated upstream
-                "tests2/us5_1.txt", "tests2/us5_2.txt",
-                "tests2/us6_1.txt", "tests2/us6_2.txt",
-                "tests2/us7_1.txt", "tests2/us7_2.txt",
-                /* "tests2/us8_1.txt", "tests2/us8_2.txt",*/
-=======
+
                 /*"tests2/us5_1.txt", "tests2/us5_2.txt",*/
                 /*"tests2/us7_1.txt", "tests2/us7_2.txt",*/
                 "tests2/us8_1.txt", "tests2/us8_2.txt",
                 /*"tests2/us8_1.txt", "tests2/us8_2.txt",*/
->>>>>>> Stashed changes
         };
         EasyAccept.main(args3);
     }

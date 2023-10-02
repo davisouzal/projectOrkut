@@ -108,8 +108,7 @@ public class Usuario {
         this.mensagens.add(mensagem);
     }
 
-<<<<<<< Updated upstream
-=======
+
     public Mensagem lerMensagem() throws NaoHaMensagensException{
         if(this.mensagens.isEmpty()){
             throw new NaoHaMensagensException();
@@ -117,7 +116,6 @@ public class Usuario {
 
         return this.mensagens.poll();
     }
->>>>>>> Stashed changes
 
     public Queue<Mensagem> getMensagens() {
         return this.mensagens;
