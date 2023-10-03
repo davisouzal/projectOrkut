@@ -210,6 +210,11 @@ public class Facade {
         if (user.getLogin().equals(userAmigo.getLogin())) {
             throw new SelfRequestException();
         }
+        //milestone2
+        if (user.getInimigos().contains(userAmigo)) {
+            throw new EnemyRequestException(userAmigo.getNome());
+        }
+
         user.getConviteAmigos().add(userAmigo);
         //se o amigo ja tiver mandado um, adiciona na lista de amigo de ambos
         if (userAmigo.getConviteAmigos().contains(user)) {
@@ -469,17 +474,8 @@ public class Facade {
     }
 
     public boolean ehPaquera(String id, String paquera) throws UserNotFoundException, AutoRelationshipException, ExistentRelantionshipException, AlreadyEnemyException {
-        if (!this.usuarios.containsKey(paquera)) {
-            throw new UserNotFoundException();
-        }
         Usuario user = this.sessoes.get(id);
         Usuario paquerado = this.usuarios.get(paquera);
-        if (user == null || paquerado == null) {
-            throw new UserNotFoundException();
-        }
-        if (user.getInimigos().contains(paquerado)) {
-            throw new AlreadyEnemyException(paquerado.getNome());
-        }
 
         return user.getPaqueras().contains(paquerado);
     }
