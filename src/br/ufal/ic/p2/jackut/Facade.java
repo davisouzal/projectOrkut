@@ -19,21 +19,18 @@ public class Facade {
 
     //ao iniciar o programa estabelece o arquivo txt de usuarios ou le o existente
     public Facade() {
+        this.usuarioLogado = null;
+        this.usuarios = new HashMap<>();
+        this.sessoes = new HashMap<>();
+        //milestone 2////////////////////////
+        this.comunidades = new HashMap<>();
         try {
-            //verifica se ja arquivo ja existe. se nao, cria um novo
+                //verifica se ja arquivo ja existe. se nao, cria um novo
             if (!new File("usuarios.txt").exists()) {
                 new File("usuarios.txt").createNewFile();
-                this.usuarioLogado = null;
-                this.usuarios = new HashMap<>();
-                this.sessoes = new HashMap<>();
-                //milestone 2///////////////////////
-                this.comunidades = new HashMap<>();
+
             } else {
-                this.usuarioLogado = null;
-                this.usuarios = new HashMap<>();
-                this.sessoes = new HashMap<>();
-                //milestone 2////////////////////////
-                this.comunidades = new HashMap<>();
+
                 //buffered reader é melhor para ler arquivos grandes
                 BufferedReader reader = new BufferedReader(new FileReader("usuarios.txt"));
                 String line;
