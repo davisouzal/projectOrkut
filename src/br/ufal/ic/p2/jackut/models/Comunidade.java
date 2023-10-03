@@ -33,7 +33,7 @@ public class Comunidade {
         return membros;
     }
 
-    public void enviarMensagem(Mensagem mensagem) {
+    public void enviarMensagem(Mensagem mensagem    ) {
         for (Usuario membro : membros) {
             membro.receberMensagem(mensagem);
         }

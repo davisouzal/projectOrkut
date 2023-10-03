@@ -70,6 +70,7 @@ public class Facade {
                     }
                     comunidades.put(nome, novaComunidade);
                 }
+                reader2.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -135,6 +136,7 @@ public class Facade {
         usuarioLogado = null;
         //deleta o arquivo de usuarios
         new File("usuarios.txt").delete();
+        new File("comunidades.txt").delete();
 
     }
 
@@ -155,6 +157,7 @@ public class Facade {
                 writer.newLine();
             }
             writer.close();
+            //escreve as comunidades
             for (Comunidade comunidade : comunidades.values()) {
                 writer2.write(comunidade.getNome() + ";" + comunidade.getDescricao() + ";" + comunidade.getDono().getLogin());
                 for (Usuario user : comunidade.getMembros()) {
@@ -162,7 +165,7 @@ public class Facade {
                 }
                 writer2.newLine();
             }
-            //escreve os membros
+
             writer2.close();
 
         } catch (IOException e) {
@@ -210,6 +213,11 @@ public class Facade {
         if (user.getLogin().equals(userAmigo.getLogin())) {
             throw new SelfRequestException();
         }
+        //milestone2
+        if(user.getInimigos().contains(userAmigo)){
+            throw new EnemyRequestException(userAmigo.getNome());
+        }
+
         user.getConviteAmigos().add(userAmigo);
         //se o amigo ja tiver mandado um, adiciona na lista de amigo de ambos
         if (userAmigo.getConviteAmigos().contains(user)) {
@@ -236,7 +244,7 @@ public class Facade {
         return amigos.toString();
 
     }
-
+    //esse vai ser o geral do sistema, o enviar recado isolado vai ser o de baixo  (eviarRecadoPaquera)
     public void enviarRecado(String id, String destinatario, String mensagem) throws UserNotFoundException {
         Usuario sender = sessoes.get(id);
         Usuario receiver = usuarios.get(destinatario);
@@ -247,8 +255,29 @@ public class Facade {
         if (sender.getLogin().equals(receiver.getLogin())) {
             throw new SelfRecadoException();
         }
+
+        if(sender.getInimigos().contains(receiver)){
+            throw new EnemyRequestException(receiver.getNome());
+        }
+
         Recado recado = new Recado(sender, receiver, mensagem);
         receiver.getRecados().add(recado);
+
+
+    }
+    //esse eh pra ser enviado no sistema de adicionar paqueras
+    public void enviarRecadoPaquera(Usuario remetente, Usuario destinatario, String mensagem) throws UserNotFoundException {
+
+
+        if (remetente == null || destinatario == null) {
+            throw new UserNotFoundException();
+        }
+
+        if (remetente.getLogin().equals(destinatario.getLogin())) {
+            throw new SelfRecadoException();
+        }
+        Recado recado = new Recado(remetente, destinatario, mensagem);
+        destinatario.getRecados().add(recado);
 
 
     }
@@ -448,41 +477,38 @@ public class Facade {
     }
 
     public boolean ehPaquera(String id, String paquera) throws UserNotFoundException, AutoRelationshipException, ExistentRelantionshipException, AlreadyEnemyException {
-        if (!this.usuarios.containsKey(paquera)) {
-            throw new UserNotFoundException();
-        }
         Usuario user = this.sessoes.get(id);
         Usuario paquerado = this.usuarios.get(paquera);
-        if (user == null || paquerado == null) {
-            throw new UserNotFoundException();
-        }
-        if (user.getInimigos().contains(paquerado)) {
-            throw new AlreadyEnemyException(paquerado.getNome());
-        }
 
         return user.getPaqueras().contains(paquerado);
     }
 
-    public void adicionarPaquera(String id, String paquera) throws UserNotFoundException, AlreadyEnemyException {
+    public void adicionarPaquera(String id, String paquera) throws UserNotFoundException, AlreadyEnemyException, ExistentRelantionshipException {
         Usuario user = this.sessoes.get(id);
         Usuario paquerado = this.usuarios.get(paquera);
-
-        if (user == null || paquerado == null) {
+        if(user == null || paquerado == null){
             throw new UserNotFoundException();
+        }
 
+        if(user.equals(paquerado)){
+            throw new AutoRelationshipException("paquera");
+        }
+        if(user.getPaqueras().contains(paquerado)){
+            throw new ExistentRelantionshipException("paquera");
         }
         if (user.getInimigos().contains(paquerado)) {
             throw new AlreadyEnemyException(paquerado.getNome());
         }
 
         if (user.getPaquerasRecebidas().contains(paquerado) || paquerado.getPaquerasRecebidas().contains(user)) {
-            this.enviarRecado(user.getNome(), paquerado.getNome(), user.getNome() + " é seu paquera - Recado do Jackut.");
-            this.enviarRecado(paquerado.getNome(), user.getNome(), paquerado.getNome() + " é seu paquera - Recado do Jackut.");
+            this.enviarRecadoPaquera(user, paquerado, user.getNome() + " é seu paquera - Recado do Jackut.");
+            this.enviarRecadoPaquera(paquerado, user, paquerado.getNome() + " é seu paquera - Recado do Jackut.");
         }
         //adiciona o parquerado a lista de paqueras do ususario
-        user.getPaqueras().add(paquerado);
+        user.setPaquera(paquerado);
         //adiciona o usuario a lista de paqueras recebidas do paquerado
-        paquerado.getPaquerasRecebidas().add(user);
+
+        paquerado.setPaquerasRecebidas(user);
 
         }
 
