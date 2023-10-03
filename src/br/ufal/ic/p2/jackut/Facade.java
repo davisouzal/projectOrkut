@@ -70,7 +70,6 @@ public class Facade {
                     }
                     comunidades.put(nome, novaComunidade);
                 }
-                reader2.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -136,7 +135,6 @@ public class Facade {
         usuarioLogado = null;
         //deleta o arquivo de usuarios
         new File("usuarios.txt").delete();
-        new File("comunidades.txt").delete();
 
     }
 
@@ -157,7 +155,6 @@ public class Facade {
                 writer.newLine();
             }
             writer.close();
-            //escreve as comunidades
             for (Comunidade comunidade : comunidades.values()) {
                 writer2.write(comunidade.getNome() + ";" + comunidade.getDescricao() + ";" + comunidade.getDono().getLogin());
                 for (Usuario user : comunidade.getMembros()) {
@@ -165,7 +162,7 @@ public class Facade {
                 }
                 writer2.newLine();
             }
-
+            //escreve os membros
             writer2.close();
 
         } catch (IOException e) {
@@ -213,11 +210,6 @@ public class Facade {
         if (user.getLogin().equals(userAmigo.getLogin())) {
             throw new SelfRequestException();
         }
-        //milestone2
-        if(user.getInimigos().contains(userAmigo)){
-            throw new EnemyRequestException(userAmigo.getNome());
-        }
-
         user.getConviteAmigos().add(userAmigo);
         //se o amigo ja tiver mandado um, adiciona na lista de amigo de ambos
         if (userAmigo.getConviteAmigos().contains(user)) {
@@ -477,8 +469,17 @@ public class Facade {
     }
 
     public boolean ehPaquera(String id, String paquera) throws UserNotFoundException, AutoRelationshipException, ExistentRelantionshipException, AlreadyEnemyException {
+        if (!this.usuarios.containsKey(paquera)) {
+            throw new UserNotFoundException();
+        }
         Usuario user = this.sessoes.get(id);
         Usuario paquerado = this.usuarios.get(paquera);
+        if (user == null || paquerado == null) {
+            throw new UserNotFoundException();
+        }
+        if (user.getInimigos().contains(paquerado)) {
+            throw new AlreadyEnemyException(paquerado.getNome());
+        }
 
         return user.getPaqueras().contains(paquerado);
     }
@@ -505,10 +506,9 @@ public class Facade {
             this.enviarRecadoPaquera(paquerado, user, paquerado.getNome() + " é seu paquera - Recado do Jackut.");
         }
         //adiciona o parquerado a lista de paqueras do ususario
-        user.setPaquera(paquerado);
+        user.getPaqueras().add(paquerado);
         //adiciona o usuario a lista de paqueras recebidas do paquerado
-
-        paquerado.setPaquerasRecebidas(user);
+        paquerado.getPaquerasRecebidas().add(user);
 
         }
 
