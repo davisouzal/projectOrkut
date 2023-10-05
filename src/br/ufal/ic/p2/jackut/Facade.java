@@ -8,6 +8,7 @@ import java.io.*;
 import java.util.*;
 
 public class Facade {
+    private System system;
     public static final String USER_NOT_FOUND = "Usuário não cadastrado.";
     private Map<String, Usuario> usuarios;
     private Usuario usuarioLogado;
@@ -19,6 +20,8 @@ public class Facade {
 
     //ao iniciar o programa estabelece o arquivo txt de usuarios ou le o existente
     public Facade() {
+        system = new System();
+
         try {
             //verifica se ja arquivo ja existe. se nao, cria um novo
             if (!new File("usuarios.txt").exists()) {
@@ -114,18 +117,7 @@ public class Facade {
     public String getAtributoUsuario(String login, String atributo) {
         Usuario user = usuarios.get(login);
 
-        if (usuarios.containsKey(login)) {
-            if (atributo.equals("nome")) {
-                return usuarios.get(login).getNome();
-            }
-            if (user.getAtributo(atributo) != null) {
-                return user.getAtributo(atributo).getValor();
-            } else {
-                throw new AtributoNaoPreenchidoException();
-            }
-        } else {
-            throw new UserNotFoundException();
-        }
+        return system.getUser(login, user, atributo);
     }
 
     public void zerarSistema() {

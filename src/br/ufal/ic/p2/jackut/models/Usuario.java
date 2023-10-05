@@ -1,5 +1,6 @@
 package br.ufal.ic.p2.jackut.models;
 
+import br.ufal.ic.p2.jackut.Exceptions.AtributoNaoPreenchidoException;
 import br.ufal.ic.p2.jackut.Exceptions.NaoHaMensagensException;
 import br.ufal.ic.p2.jackut.utils.Formater;
 
@@ -29,6 +30,7 @@ public class Usuario {
     private final ArrayList<Usuario> paqueras = new ArrayList<>();
     private final ArrayList<Usuario> paquerasRecebidas = new ArrayList<>();
     private final ArrayList<Usuario> inimigos = new ArrayList<>();
+    private String attribute;
 
     public Usuario(String login, String senha, String nome) {
         this.login = login;
