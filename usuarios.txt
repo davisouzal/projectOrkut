@@ -1,11 +1,11 @@
-jpsauve;sauvejp;Jacques Sauve
-fadejacques;seuqcajedaf;Fã de Jacques
-paquera2dejacques;abcdef;Paquera 2 de Jacques
-inimigo2dejacques;abcdef;Inimigo 2 de Jacques
-jacquespersistente;abcdef;Jacques Persistente
-fapersistentedejacques;seuqcajedaf;Fã Persistente de Jacques
-fa2dejacques;seuqcajedaf;Fã 2 de Jacques
-paqueradejacques;abcdef;Paquera de Jacques
-inimigopersistentedejacques;abcdef;Inimigo Persistente de Jacques
-inimigodejacques;abcdef;Inimigo de Jacques
-paquerapersistentedejacques;abcdef;Paquera Persistente de Jacques
+jpsauve;sauvejp;Jacques Sauve;nome;Jacques Sauve
+fadejacques;seuqcajedaf;Fã de Jacques;nome;Fã de Jacques
+paquera2dejacques;abcdef;Paquera 2 de Jacques;nome;Paquera 2 de Jacques
+inimigo2dejacques;abcdef;Inimigo 2 de Jacques;nome;Inimigo 2 de Jacques
+jacquespersistente;abcdef;Jacques Persistente;nome;Jacques Persistente
+fapersistentedejacques;seuqcajedaf;Fã Persistente de Jacques;nome;Fã Persistente de Jacques
+fa2dejacques;seuqcajedaf;Fã 2 de Jacques;nome;Fã 2 de Jacques
+paqueradejacques;abcdef;Paquera de Jacques;nome;Paquera de Jacques
+inimigopersistentedejacques;abcdef;Inimigo Persistente de Jacques;nome;Inimigo Persistente de Jacques
+inimigodejacques;abcdef;Inimigo de Jacques;nome;Inimigo de Jacques
+paquerapersistentedejacques;abcdef;Paquera Persistente de Jacques;nome;Paquera Persistente de Jacques
