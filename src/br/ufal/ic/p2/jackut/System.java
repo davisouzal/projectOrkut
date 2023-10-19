@@ -530,13 +530,16 @@ public class System {
     }
 
 
-    public void adicionarInimigo(Usuario user, Usuario enemy) throws ExistentRelantionshipException, AutoRelationshipException {
+    public void adicionarInimigo(Usuario user, Usuario enemy) throws ExistentRelantionshipException, AutoRelationshipException, UserNotFoundException {
 
         if (user.equals(enemy)) {
             throw new AutoRelationshipException("inimigo");
         }
         if (user.getInimigos().contains(enemy)) {
             throw new ExistentRelantionshipException("inimigo");
+        }
+        if(enemy==null){
+            throw new UserNotFoundException();
         }
 
         user.setInimigo(enemy);
