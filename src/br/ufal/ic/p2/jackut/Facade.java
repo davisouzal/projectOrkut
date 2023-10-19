@@ -125,7 +125,7 @@ public class Facade {
         Usuario user = system.getSessoes().get(id);
         Usuario paquerado = system.getUsuarios().get(paquera);
 
-        return system.ehPaquera(user,paquerado);
+        return user.getPaqueras().contains(paquerado);
     }
 
     public void adicionarPaquera(String id, String paquera) throws UserNotFoundException, AlreadyEnemyException, ExistentRelantionshipException {

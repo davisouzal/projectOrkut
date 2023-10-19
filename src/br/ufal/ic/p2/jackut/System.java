@@ -442,11 +442,7 @@ public class System {
     }
 
     public void adicionarIdolo(Usuario user, Usuario idol) throws UserNotFoundException, ExistentRelantionshipException, AutoRelationshipException, AlreadyEnemyException {
-        if (!this.usuarios.containsKey(idol.getNome())) {
-            throw new UserNotFoundException();
-        }
-        ;
-        if (user == null || idol == null) {
+        if(!usuarios.containsValue(idol)){
             throw new UserNotFoundException();
         }
         if (user.equals(idol)) {
@@ -458,6 +454,7 @@ public class System {
         if (user.getInimigos().contains(idol)) {
             throw new AlreadyEnemyException(idol.getNome());
         }
+
 
         user.setIdolo(idol);
         idol.setFa(user);
@@ -533,14 +530,8 @@ public class System {
     }
 
 
-    public void adicionarInimigo(Usuario user, Usuario enemy) throws UserNotFoundException, ExistentRelantionshipException, AutoRelationshipException {
-        if (!this.usuarios.containsKey(enemy.getLogin())) {
-            throw new UserNotFoundException();
-        }
+    public void adicionarInimigo(Usuario user, Usuario enemy) throws ExistentRelantionshipException, AutoRelationshipException {
 
-        if (user == null || enemy == null) {
-            throw new UserNotFoundException();
-        }
         if (user.equals(enemy)) {
             throw new AutoRelationshipException("inimigo");
         }
