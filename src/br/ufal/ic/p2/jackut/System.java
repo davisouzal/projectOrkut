@@ -72,7 +72,7 @@ public class System {
                     usuarios.put(user[0], usuario);
                 }
                 reader.close();
-                //le o arquivo de comunidades
+                //le o arquivo de comunidades porem de forma melhorada e atualizada
                 BufferedReader reader2 = new BufferedReader(new FileReader("comunidades.txt"));
                 String line2;
                 while ((line2 = reader2.readLine()) != null) {
@@ -81,12 +81,64 @@ public class System {
                     String descricao = comunidade[1];
                     String dono = comunidade[2];
                     Comunidade novaComunidade = new Comunidade(nome, descricao, usuarios.get(dono));
-                    //adiciona os membros
+                    // Adiciona o dono à comunidade se ele não estiver na lista de membros
+                    if (!novaComunidade.getMembros().contains(usuarios.get(dono))) {
+                        novaComunidade.getMembros().add(usuarios.get(dono));
+                    }
+
                     for (int i = 3; i < comunidade.length; i++) {
-                        novaComunidade.getMembros().add(usuarios.get(comunidade[i]));
+                        Usuario membro = usuarios.get(comunidade[i]);
+                        // Adicione membros à comunidade se eles não estiverem na lista de membros
+                        if (!novaComunidade.getMembros().contains(membro)) {
+                            novaComunidade.getMembros().add(membro);
+                        }
                     }
                     comunidades.put(nome, novaComunidade);
                 }
+                //insere comunidades nos usuarios de tras pra frente
+                for (Comunidade comunidade : comunidades.values()) {
+                    for (Usuario membro : comunidade.getMembros()) {
+                        membro.getComunidades().put(comunidade.getNome(), comunidade);
+                    }
+                }
+
+                //le o arquivo de amigos
+                BufferedReader reader3 = new BufferedReader(new FileReader("amigos.txt"));
+                String line3;
+                while ((line3 = reader3.readLine()) != null) {
+                    String[] amigos = line3.split(";", -1);
+                    String login = amigos[0];
+                    for (int i = 1; i < amigos.length; i++) {
+                        usuarios.get(login).getAmigo().add(usuarios.get(amigos[i]));
+                    }
+                }
+                reader3.close();
+                //le o arquivo de recados
+                BufferedReader reader4 = new BufferedReader(new FileReader("recados.txt"));
+                String line4;
+                while ((line4 = reader4.readLine()) != null) {
+                    String[] recados = line4.split(";", -1);
+                    String remetente = recados[0];
+                    String destinatario = recados[1];
+                    String mensagem = recados[2];
+                    Recado recado = new Recado(usuarios.get(remetente), usuarios.get(destinatario), mensagem);
+                    usuarios.get(destinatario).getRecados().add(recado);
+                }
+                reader4.close();
+                //le o arquivo de mensagens
+                BufferedReader reader5 = new BufferedReader(new FileReader("mensagens.txt"));
+                String line5;
+                while ((line5 = reader5.readLine()) != null) {
+                    String[] mensagens = line5.split(";");
+                    String remetente = mensagens[0];
+                    String mensagem = mensagens[1];
+                    Mensagem message = new Mensagem(mensagem, usuarios.get(remetente));
+                    usuarios.get(remetente).getMensagens().add(message);
+                }
+                reader5.close();
+
+
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -117,7 +169,6 @@ public class System {
         //escreve no arquivo de usuarios
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("usuarios.txt"));
-            BufferedWriter writer2 = new BufferedWriter(new FileWriter("comunidades.txt"));
             for (Usuario user : usuarios.values()) {
                 writer.write(user.getLogin() + ";" + user.getSenha() + ";" + user.getNome());
                 //tambem grava os atributos
@@ -127,15 +178,49 @@ public class System {
                 writer.newLine();
             }
             writer.close();
+            //escreve no arquivo de comunidades
+            BufferedWriter writer2 = new BufferedWriter(new FileWriter("comunidades.txt"));
             for (Comunidade comunidade : comunidades.values()) {
                 writer2.write(comunidade.getNome() + ";" + comunidade.getDescricao() + ";" + comunidade.getDono().getLogin());
-                for (Usuario user : comunidade.getMembros()) {
-                    writer2.write(";" + user.getLogin());
+                //esta salvando o dono duas vezes
+                for (Usuario membro : comunidade.getMembros()) {
+                    writer2.write(";" + membro.getLogin());
                 }
                 writer2.newLine();
             }
-            //escreve os membros
             writer2.close();
+
+            BufferedWriter writer3 = new BufferedWriter(new FileWriter("amigos.txt"));
+
+            for (Usuario user : usuarios.values()) {
+                writer3.write(user.getLogin());
+                for (Usuario amigo : user.getAmigo()) {
+                    writer3.write(";" + amigo.getLogin());
+                }
+                writer3.newLine();
+            }
+            writer3.close();
+            //salva os recados
+            //salva os recados em apenas um arquivo de recados
+            BufferedWriter writer4 = new BufferedWriter(new FileWriter("recados.txt"));
+            for (Usuario user : usuarios.values()) {
+                for (Recado recado : user.getRecados()) {
+                    writer4.write(recado.getRemetente().getLogin() + ";" + recado.getDestinatario().getLogin() + ";" + recado.getRecado());
+                    writer4.newLine();
+                }
+            }
+            writer4.close();
+            //salva as mensagens em apenas um arquivo de mensagens
+            BufferedWriter writer5 = new BufferedWriter(new FileWriter("mensagens.txt"));
+            for (Usuario user : usuarios.values()) {
+                for (Mensagem mensagem : user.getMensagens()) {
+                    writer5.write(mensagem.getRemetente().getLogin() + ";" + mensagem.getMensagem());
+                    writer5.newLine();
+                }
+            }
+            //mensagens recebidas
+
+
 
         } catch (IOException e) {
             e.printStackTrace();
