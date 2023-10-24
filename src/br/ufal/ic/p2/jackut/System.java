@@ -482,38 +482,6 @@ public class System {
         user.getComunidades().put(nome, comunidade);
     }
 
-    public String lerMensagem(Usuario user) throws UserNotFoundException, NaoHaMensagensException {
-
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
-        if (!usuarios.containsKey(user.getLogin())) {
-            throw new UserNotFoundException();
-        }
-        if (user.getMensagens().isEmpty()) {
-            throw new NaoHaMensagensException();
-        }
-        Mensagem mensagem = user.getMensagens().poll();
-        assert mensagem != null;
-        return mensagem.getMensagem();
-    }
-
-    public void enviarMensagem(Usuario user, String comunidade, String mensagem) throws UserNotFoundException, ComunidadeNaoEncontradaException {
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
-        if (!usuarios.containsKey(user.getLogin())) {
-            throw new UserNotFoundException();
-        }
-        Comunidade comunidadeEnvio = comunidades.get(comunidade);
-        if (!comunidades.containsKey(comunidade)) {
-            throw new ComunidadeNaoEncontradaException();
-        }
-        Mensagem message = new Mensagem(mensagem, user);
-
-        comunidadeEnvio.enviarMensagem(message);
-    }
-
     public boolean ehFa(String login, String idolo) throws UserNotFoundException {
         if (!this.usuarios.containsKey(login) || !this.usuarios.containsKey(idolo)) {
             throw new UserNotFoundException();

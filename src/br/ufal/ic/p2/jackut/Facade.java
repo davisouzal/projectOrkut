@@ -3,6 +3,7 @@ package br.ufal.ic.p2.jackut;
 import br.ufal.ic.p2.jackut.Exceptions.*;
 import br.ufal.ic.p2.jackut.models.*;
 import br.ufal.ic.p2.jackut.utils.Formater;
+import service.MessageService;
 
 import java.io.*;
 import java.util.*;
@@ -10,6 +11,8 @@ import java.util.*;
 public class Facade {
     private final System system = new System();
     public static final String USER_NOT_FOUND = "Usuário não cadastrado.";
+
+    private final MessageService messageService = new MessageService(system.getUsuarios(), system.getComunidades(), system);
 
 
     //ao iniciar o programa estabelece o arquivo txt de usuarios ou le o existente
@@ -96,13 +99,11 @@ public class Facade {
     }
 
     public String lerMensagem(String id) throws UserNotFoundException, NaoHaMensagensException {
-        Usuario user = system.getSessoes().get(id);
-        return system.lerMensagem(user);
+        return messageService.lerMensagem(id);
     }
 
     public void enviarMensagem(String id, String comunidade, String mensagem) throws UserNotFoundException, ComunidadeNaoEncontradaException {
-        Usuario user = system.getSessoes().get(id);
-        system.enviarMensagem(user, comunidade, mensagem);
+        messageService.enviarMensagem(id, comunidade, mensagem);
     }
 
     public boolean ehFa(String login, String idolo) throws UserNotFoundException {
