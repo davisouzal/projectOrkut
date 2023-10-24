@@ -3,22 +3,16 @@ package service;
 import br.ufal.ic.p2.jackut.Exceptions.ComunidadeNaoEncontradaException;
 import br.ufal.ic.p2.jackut.Exceptions.NaoHaMensagensException;
 import br.ufal.ic.p2.jackut.Exceptions.UserNotFoundException;
-import br.ufal.ic.p2.jackut.System;
+import br.ufal.ic.p2.jackut.SystemService;
 import br.ufal.ic.p2.jackut.models.Comunidade;
 import br.ufal.ic.p2.jackut.models.Usuario;
 import br.ufal.ic.p2.jackut.models.Mensagem;
 
-import java.util.Map;
-
 public class MessageService {
-    private Map<String, Usuario> usuarios;
-    private Map<String, Comunidade> comunidades;
 
-    private final System system;
+    private final SystemService system;
 
-    public MessageService(Map<String, Usuario> usuarios, Map<String, Comunidade> comunidades, System system) {
-        this.usuarios = usuarios;
-        this.comunidades = comunidades;
+    public MessageService(SystemService system) {
         this.system = system;
     }
 
@@ -50,11 +44,12 @@ public class MessageService {
         }
 
         Mensagem mensagem = usuario.getMensagens().poll();
+        usuario.getMensagensRecebidas().add(usuario.getMensagensRecebidas().size(), mensagem);
         assert mensagem != null;
         return mensagem.getMensagem();
     }
 
-    public System getSystem() {
+    public SystemService getSystem() {
         return system;
     }
 }

@@ -1,6 +1,5 @@
 package br.ufal.ic.p2.jackut.models;
 
-import br.ufal.ic.p2.jackut.Exceptions.AtributoNaoPreenchidoException;
 import br.ufal.ic.p2.jackut.Exceptions.NaoHaMensagensException;
 import br.ufal.ic.p2.jackut.utils.Formater;
 
@@ -30,7 +29,13 @@ public class Usuario {
     private final ArrayList<Usuario> paqueras = new ArrayList<>();
     private final ArrayList<Usuario> paquerasRecebidas = new ArrayList<>();
     private final ArrayList<Usuario> inimigos = new ArrayList<>();
-    private String attribute;
+
+    public ArrayList<Mensagem> getMensagensRecebidas() {
+        return mensagensRecebidas;
+    }
+
+    private final ArrayList<Mensagem> mensagensRecebidas = new ArrayList<>();
+
 
     public Usuario(String login, String senha, String nome) {
         this.login = login;
@@ -96,9 +101,10 @@ public class Usuario {
     }
 
     //////////////////milestone 2////////////////////////////////////////////////////////
-    public void criarComunidade(String nome, String descricao) {
+    public Comunidade criarComunidade(String nome, String descricao) {
         Comunidade comunidade = new Comunidade(nome, descricao, this);
         this.comunidades.put(nome, comunidade);
+        return comunidade;
     }
 
     public Map<String, Comunidade> getComunidades() {

@@ -2,30 +2,29 @@ package br.ufal.ic.p2.jackut;
 
 import br.ufal.ic.p2.jackut.Exceptions.*;
 import br.ufal.ic.p2.jackut.models.*;
-import br.ufal.ic.p2.jackut.utils.Formater;
-import service.MessageService;
-import service.RecadoService;
-
-import java.io.*;
-import java.util.*;
+import service.*;
 
 public class Facade {
-    private final System system = new System();
+    private final SystemService system = new SystemService();
     public static final String USER_NOT_FOUND = "Usuário não cadastrado.";
 
-    private final MessageService messageService = new MessageService(system.getUsuarios(), system.getComunidades(), system);
+    private final MessageService messageService = new MessageService(system);
     private final RecadoService recadoService = new RecadoService(system);
+    private final UsuarioService usuarioService = new UsuarioService(system);
+    private final ComunidadeService comunidadeService = new ComunidadeService(system);
+    private final RelacaoService relacaoService = new RelacaoService(system, recadoService);
+    private final AmizadeService amizadeService = new AmizadeService(system);
 
 
     //ao iniciar o programa estabelece o arquivo txt de usuarios ou le o existente
 
     public void criarUsuario(String login, String senha, String nome) throws ContaJaExisteException, LoginInvalidoException, SenhaInvalidaException  {
         Usuario usuario = new Usuario(login, senha, nome);
-        system.addUser(usuario);
+        usuarioService.addUser(usuario);
     }
 
     public String getAtributoUsuario(String login, String atributo) throws UserNotFoundException, AtributoNaoPreenchidoException{
-        return system.getAtributoUsuario(login, atributo);
+        return usuarioService.getAtributoUsuario(login, atributo);
     }
 
     public void zerarSistema() {
@@ -42,21 +41,21 @@ public class Facade {
     }
 
     public void editarPerfil(String id, String atributo, String valor)  throws UserNotFoundException{
-        system.editarPerfil(id, atributo, valor);
+        usuarioService.editarPerfil(id, atributo, valor);
     }
 
     public Boolean ehAmigo(String login, String loginAmigo) {
-        return system.ehAmigo(login, loginAmigo);
+        return amizadeService.ehAmigo(login, loginAmigo);
     }
 
     //send friend request, se o amigo ja tiver mandado um, adiciona na lista de amigo de ambos
     public void adicionarAmigo(String id, String loginAmigo) {
-        system.adicionarAmigo(id, loginAmigo);
+        amizadeService.adicionarAmigo(id, loginAmigo);
     }
 
     //amigos adicionados do usuario do login no header
     public String getAmigos(String login) {
-        return system.getAmigos(login);
+        return amizadeService.getAmigos(login);
     }
     //esse vai ser o geral do sistema, o enviar recado isolado vai ser o de baixo  (eviarRecadoPaquera)
     public void enviarRecado(String id, String destinatario, String mensagem) throws UserNotFoundException {
@@ -73,31 +72,31 @@ public class Facade {
 
     //////////////////milestone 2////////////////////////////////////////////////////////
     public void criarComunidade(String id, String nome, String descricao) throws UserNotFoundException {
-        system.criarComunidade(id, nome, descricao);
+        comunidadeService.criarComunidade(id, nome, descricao);
     }
 
     public String getDescricaoComunidade(String nome) throws ComunidadeNaoEncontradaException {
-        return system.getDescricaoComunidade(nome);
+        return comunidadeService.getDescricaoComunidade(nome);
     }
 
     public String getDonoComunidade(String nomeComunidade) throws ComunidadeNaoEncontradaException {
-        return system.getDonoComunidade(nomeComunidade);
+        return comunidadeService.getDonoComunidade(nomeComunidade);
     }
 
     public String getMembrosComunidade(String nomeComunidade) throws ComunidadeNaoEncontradaException {
-        return system.getMembrosComunidade(nomeComunidade);
+        return comunidadeService.getMembrosComunidade(nomeComunidade);
 
     }
 
     //get Comunidades
     public String getComunidades(String login) throws UserNotFoundException {
-        return system.getComunidades(login);
+        return comunidadeService.getComunidades(login);
     }
 
     //adicionar Comunidades, adiciona usuario na lista de membros da comunidade
     public void adicionarComunidade(String id, String nomeComunidade) throws UserNotFoundException, ComunidadeNaoEncontradaException, UsuarioJaEstaNaComunidadeException {
         Usuario user = system.getSessoes().get(id);
-        system.adicionarComunidade(user, nomeComunidade);
+        comunidadeService.adicionarComunidade(user, nomeComunidade);
     }
 
     public String lerMensagem(String id) throws UserNotFoundException, NaoHaMensagensException {
@@ -109,37 +108,37 @@ public class Facade {
     }
 
     public boolean ehFa(String login, String idolo) throws UserNotFoundException {
-        return system.ehFa(login, idolo);
+        return relacaoService.ehFa(login, idolo);
     }
 
     public void adicionarIdolo(String id, String idolo) throws UserNotFoundException, ExistentRelantionshipException, AutoRelationshipException, AlreadyEnemyException {
         Usuario user = system.getSessoes().get(id);
         Usuario idol = system.getUsuarios().get(idolo);
-        system.adicionarIdolo(user, idol);
+        relacaoService.adicionarIdolo(user, idol);
     }
 
 
     public String getFas(String login) throws UserNotFoundException {
         Usuario user = system.getUsuarios().get(login);
-        return system.getFas(user);
+        return relacaoService.getFas(user);
     }
 
     public boolean ehPaquera(String id, String paquera){
         Usuario user = system.getSessoes().get(id);
         Usuario paquerado = system.getUsuarios().get(paquera);
 
-        return user.getPaqueras().contains(paquerado);
+        return relacaoService.ehPaquera(user, paquerado);
     }
 
     public void adicionarPaquera(String id, String paquera) throws UserNotFoundException, AlreadyEnemyException, ExistentRelantionshipException {
         Usuario user = system.getSessoes().get(id);
         Usuario paquerado = system.getUsuarios().get(paquera);
-        system.adicionarPaquera(user, paquerado);
+        relacaoService.adicionarPaquera(user, paquerado);
     }
 
     public String getPaqueras(String id) throws UserNotFoundException {
         Usuario user = system.getSessoes().get(id);
-        return system.getPaqueras(user);
+        return relacaoService.getPaqueras(user);
     }
 
     public void adicionarInimigo(String id, String inimigo) throws UserNotFoundException, ExistentRelantionshipException, AutoRelationshipException {
@@ -147,12 +146,12 @@ public class Facade {
         Usuario user = system.getSessoes().get(id);
         Usuario enemy = system.getUsuarios().get(inimigo);
 
-        system.adicionarInimigo(user, enemy);
+        relacaoService.adicionarInimigo(user, enemy);
     }
 
     public void removerUsuario(String id) {
         Usuario user = system.getSessoes().get(id);
-        system.removerUsuario(user, id);
+        usuarioService.removerUsuario(user, id);
 
     }
 }

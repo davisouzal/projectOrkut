@@ -6,14 +6,12 @@ import br.ufal.ic.p2.jackut.Exceptions.SelfRecadoException;
 import br.ufal.ic.p2.jackut.Exceptions.UserNotFoundException;
 import br.ufal.ic.p2.jackut.models.Recado;
 import br.ufal.ic.p2.jackut.models.Usuario;
-import br.ufal.ic.p2.jackut.System;
-
-import java.util.Map;
+import br.ufal.ic.p2.jackut.SystemService;
 
 public class RecadoService {
 
-    private final System system;
-    public RecadoService( System system) {
+    private final SystemService system;
+    public RecadoService( SystemService system) {
         this.system = system;
     }
 
@@ -62,6 +60,6 @@ public class RecadoService {
             throw new NaoHaRecadosException();
         }
 
-        return recado.getRecado();
+        return recado.getMensagem();
     }
 }
