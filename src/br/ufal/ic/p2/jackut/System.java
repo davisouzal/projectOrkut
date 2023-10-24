@@ -5,6 +5,7 @@ import br.ufal.ic.p2.jackut.models.*;
 import java.io.*;
 import java.util.*;
 
+
 import static br.ufal.ic.p2.jackut.Facade.USER_NOT_FOUND;
 
 public class System {
@@ -51,7 +52,7 @@ public class System {
                 this.sessoes = new HashMap<>();
                 //milestone 2////////////////////////
                 this.comunidades = new HashMap<>();
-                //buffered reader é melhor para ler arquivos grandes
+                //buffered reader ï¿½ melhor para ler arquivos grandes
                 BufferedReader reader = new BufferedReader(new FileReader("usuarios.txt"));
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -81,14 +82,14 @@ public class System {
                     String descricao = comunidade[1];
                     String dono = comunidade[2];
                     Comunidade novaComunidade = new Comunidade(nome, descricao, usuarios.get(dono));
-                    // Adiciona o dono à comunidade se ele não estiver na lista de membros
+                    // Adiciona o dono ï¿½ comunidade se ele nï¿½o estiver na lista de membros
                     if (!novaComunidade.getMembros().contains(usuarios.get(dono))) {
                         novaComunidade.getMembros().add(usuarios.get(dono));
                     }
 
                     for (int i = 3; i < comunidade.length; i++) {
                         Usuario membro = usuarios.get(comunidade[i]);
-                        // Adicione membros à comunidade se eles não estiverem na lista de membros
+                        // Adicione membros ï¿½ comunidade se eles nï¿½o estiverem na lista de membros
                         if (!novaComunidade.getMembros().contains(membro)) {
                             novaComunidade.getMembros().add(membro);
                         }
@@ -274,6 +275,7 @@ public class System {
             throw new LoginOuSenhaInvalidoException();
         }
         Usuario usuario = usuarios.get(login);
+
         if (usuario == null || !usuario.validarSenha(senha)) {
             throw new LoginOuSenhaInvalidoException();
         }
@@ -499,10 +501,10 @@ public class System {
             throw new UserNotFoundException();
         }
         if (user.equals(idol)) {
-            throw new AutoRelationshipException("fã");
+            throw new AutoRelationshipException("fï¿½");
         }
         if (user.getIdolos().contains(idol)) {
-            throw new ExistentRelantionshipException("ídolo");
+            throw new ExistentRelantionshipException("ï¿½dolo");
         }
         if (user.getInimigos().contains(idol)) {
             throw new AlreadyEnemyException(idol.getNome());
@@ -554,8 +556,8 @@ public class System {
         }
 
         if (user.getPaquerasRecebidas().contains(paquerado) || paquerado.getPaquerasRecebidas().contains(user)) {
-            this.enviarRecadoPaquera(user, paquerado, user.getNome() + " é seu paquera - Recado do Jackut.");
-            this.enviarRecadoPaquera(paquerado, user, paquerado.getNome() + " é seu paquera - Recado do Jackut.");
+            this.enviarRecadoPaquera(user, paquerado, user.getNome() + " ï¿½ seu paquera - Recado do Jackut.");
+            this.enviarRecadoPaquera(paquerado, user, paquerado.getNome() + " ï¿½ seu paquera - Recado do Jackut.");
         }
         //adiciona o parquerado a lista de paqueras do ususario
         user.getPaqueras().add(paquerado);

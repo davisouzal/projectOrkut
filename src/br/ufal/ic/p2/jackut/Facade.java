@@ -4,6 +4,7 @@ import br.ufal.ic.p2.jackut.Exceptions.*;
 import br.ufal.ic.p2.jackut.models.*;
 import br.ufal.ic.p2.jackut.utils.Formater;
 import service.MessageService;
+import service.RecadoService;
 
 import java.io.*;
 import java.util.*;
@@ -13,6 +14,7 @@ public class Facade {
     public static final String USER_NOT_FOUND = "Usuário não cadastrado.";
 
     private final MessageService messageService = new MessageService(system.getUsuarios(), system.getComunidades(), system);
+    private final RecadoService recadoService = new RecadoService(system);
 
 
     //ao iniciar o programa estabelece o arquivo txt de usuarios ou le o existente
@@ -58,15 +60,15 @@ public class Facade {
     }
     //esse vai ser o geral do sistema, o enviar recado isolado vai ser o de baixo  (eviarRecadoPaquera)
     public void enviarRecado(String id, String destinatario, String mensagem) throws UserNotFoundException {
-        system.enviarRecado(id, destinatario, mensagem);
+        recadoService.enviarRecado(id, destinatario, mensagem);
     }
     //esse eh pra ser enviado no sistema de adicionar paqueras
     public void enviarRecadoPaquera(Usuario remetente, Usuario destinatario, String mensagem) throws UserNotFoundException {
-        system.enviarRecadoPaquera(remetente, destinatario, mensagem);
+        recadoService.enviarRecadoPaquera(remetente, destinatario, mensagem);
     }
 
     public String lerRecado(String id) throws UserNotFoundException, NaoHaRecadosException {
-        return system.lerRecado(id);
+        return recadoService.lerRecado(id);
     }
 
     //////////////////milestone 2////////////////////////////////////////////////////////
