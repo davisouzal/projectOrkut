@@ -1,3 +1,0 @@
-Comunidade de Osorio;abc;oabath;oabath
-Comunidade de John;abc;jdoe;jdoe
-Comunidade de Jacques;abc;jpsauve;jpsauve;oabath;jdoe

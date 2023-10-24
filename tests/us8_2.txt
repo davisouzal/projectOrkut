@@ -9,4 +9,3 @@ expect {jacquespersistente} getPaqueras id=${s2}
 expectError "Função inválida: Inimigo Persistente de Jacques é seu inimigo." adicionarAmigo id=${s1} amigo=inimigopersistentedejacques
 
 encerrarSistema
-quit

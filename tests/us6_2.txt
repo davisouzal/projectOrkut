@@ -8,4 +8,3 @@ expect "{Professores da UFCG,Alunos da UFCG}" getComunidades login=jpsauve
 expect "{Alunos da UFCG,Professores da UFCG}" getComunidades login=oabath
 
 encerrarSistema
-quit

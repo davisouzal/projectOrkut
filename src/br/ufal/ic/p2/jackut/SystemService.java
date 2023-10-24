@@ -140,6 +140,30 @@ public class SystemService {
                     usuarios.get(remetente).getMensagens().add(message);
                 }
                 reader5.close();
+                //le o arquivo de fas
+                /*BufferedReader reader6 = new BufferedReader(new FileReader("relacionamentos.txt"));
+                String line6;
+                while ((line6 = reader6.readLine()) != null) {
+                    String[] relacionamentos = line6.split(";");
+                    String relacao = relacionamentos[2];
+                    Usuario user = getUsuarios().get(relacionamentos[0]);
+                    Usuario relacionado = getUsuarios().get(relacionamentos[1]);
+
+                    if(relacao.equals("idolo")) {
+
+                    } else if(relacao.equals("fa")){
+
+                    } else if(relacao.equals("paquera")){
+
+                    } else if(relacao.equals("paquerarecebida")){
+
+                    } else if(relacao.equals("enemy")){
+
+                    } else {
+                        throw new RuntimeException("Relacao nao encontrada");
+                    }
+                                    }
+                reader6.close();*/
 
 
             }
@@ -215,17 +239,60 @@ public class SystemService {
             writer4.close();
             //salva as mensagens em apenas um arquivo de mensagens
             BufferedWriter writer5 = new BufferedWriter(new FileWriter("mensagens.txt"));
+            StringBuilder mensagensUser = new StringBuilder();
             for (Usuario user : usuarios.values()) {
                 Queue<Mensagem> mensagens = user.getMensagens();
 
                 // Collections.reverse(mensagens);
                 for (Mensagem mensagem : mensagens) {
-                    writer5.write(mensagem.getRemetente().getLogin() + ";" + mensagem.getMensagem());
-                    writer5.newLine();
-                    System.out.println(mensagem.getMensagem());
+                    mensagensUser.append(user.getLogin()).append(";")
+                            .append(mensagem.getMensagem()).append("\n");
+
                 }
             }
+            writer5.write(mensagensUser.toString());
             writer5.close();
+            File file = new File("relacionamentos.txt");
+            file.createNewFile();
+
+            FileWriter fw = new FileWriter(file);
+            BufferedWriter writer6 = new BufferedWriter(fw);
+            StringBuilder relacoesData = new StringBuilder();
+            for (Usuario usuario : usuarios.values()) {
+                for (Usuario idolo : usuario.getIdolos()) {
+                    relacoesData.append(usuario.getLogin()).append(";")
+                            .append(idolo.getLogin()).append(";")
+                            .append("idolo").append("\n");
+                }
+
+                for (Usuario fa : usuario.getFas()) {
+                    relacoesData.append(usuario.getLogin()).append(";")
+                            .append(fa.getLogin()).append(";")
+                            .append("fa").append("\n");
+                }
+
+                for (Usuario paquera : usuario.getPaqueras()) {
+                    relacoesData.append(usuario.getLogin()).append(";")
+                            .append(paquera.getLogin()).append(";")
+                            .append("paquera").append("\n");
+                }
+
+                for (Usuario paquerasRecebidas : usuario.getPaquerasRecebidas()) {
+                    relacoesData.append(usuario.getLogin()).append(";")
+                            .append(paquerasRecebidas.getLogin()).append(";")
+                            .append("paquerarecebida").append("\n");
+                }
+
+                for (Usuario inimigos : usuario.getInimigos()) {
+                    relacoesData.append(usuario.getLogin()).append(";")
+                            .append(inimigos.getLogin()).append(";")
+                            .append("enemy").append("\n");
+                }
+            }
+            writer6.write(relacoesData.toString());
+            writer6.flush();
+            writer6.close();
+            fw.close();
 
 
         } catch (IOException e) {

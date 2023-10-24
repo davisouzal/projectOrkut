@@ -169,4 +169,3 @@ s4=abrirSessao login=inimigopersistentedejacques senha=abcdef
 adicionarInimigo id=${s4} inimigo=jacquespersistente
 
 encerrarSistema
-quit
